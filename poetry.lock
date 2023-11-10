@@ -201,6 +201,31 @@ files = [
 graph = ["objgraph (>=1.7.2)"]
 
 [[package]]
+name = "funcy"
+version = "2.0"
+description = "A fancy and practical functional tools"
+optional = false
+python-versions = "*"
+files = [
+    {file = "funcy-2.0-py2.py3-none-any.whl", hash = "sha256:53df23c8bb1651b12f095df764bfb057935d49537a56de211b098f4c79614bb0"},
+    {file = "funcy-2.0.tar.gz", hash = "sha256:3963315d59d41c6f30c04bc910e10ab50a3ac4a225868bfa96feed133df075cb"},
+]
+
+[[package]]
+name = "funcy-pipe"
+version = "0.2.0"
+description = "If Funcy and Pipe had a baby. Decorates all Funcy methods with Pipe superpowers."
+optional = false
+python-versions = ">=3.11,<4.0"
+files = [
+    {file = "funcy_pipe-0.2.0-py3-none-any.whl", hash = "sha256:23d9bc903fa5daeb0d6a3a0e342127a86c1dc01852518bdc3f390aa21f2cca47"},
+    {file = "funcy_pipe-0.2.0.tar.gz", hash = "sha256:698f4a3606f12b615ad062d1677fa4de185f2e141130f299810ed4a810491885"},
+]
+
+[package.dependencies]
+funcy = ">=2.0,<3.0"
+
+[[package]]
 name = "idna"
 version = "3.4"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -452,4 +477,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "66656c37b3b4013049f4c15ab2af7883f256c4e48eb0bac461f63ae08a0a476c"
+content-hash = "583d4b16b58fcbda6de5c71db052f4619c6e550327d693564d5d3f2daaebfc2c"
