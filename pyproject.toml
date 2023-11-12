@@ -5,6 +5,7 @@ description = "Generate a digest of comments that occured since the last checked
 authors = ["Michael Bianco <mike@mikebian.co>"]
 license = "MIT"
 readme = "README.md"
+keywords = ["todoist", "digest", "task", "management"]
 
 [tool.poetry.dependencies]
 python = "^3.12"

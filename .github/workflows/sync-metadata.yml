@@ -8,7 +8,7 @@ on:
 permissions: read-all
 
 jobs:
-  sync-metadatag:
+  sync-metadata:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
