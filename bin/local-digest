@@ -6,6 +6,9 @@ cd "${0%/*}/.."
 LAST_SYNC=$(<last_sync)
 TARGET_USER=$TARGET_USER
 
-poetry run python run.py --last-synced $LAST_SYNC --target-user $TARGET_USER
+poetry run python run.py \
+  --last-synced $LAST_SYNC \
+  --target-user $TARGET_USER \
+  --target-project $TARGET_PROJECT
 
 date -u +"%Y-%m-%dT%H:%M:%SZ" > last_sync

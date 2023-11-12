@@ -101,7 +101,8 @@ api = None
 @click.command()
 @click.option("--last-synced", required=True, help="The last synced date.")
 @click.option("--target-user", required=True, help="The target user.")
-def main(last_synced, target_user):
+@click.option("--target-project", required=True, help="The target project.")
+def main(last_synced, target_user, target_project):
     api_key = os.getenv("TODOIST_API_KEY")
     assert api_key is not None
 
@@ -112,8 +113,9 @@ def main(last_synced, target_user):
     Project(color='blue', comment_count=0, id='project_id', is_favorite=False, is_inbox_project=False, is_shared=True, is_team_inbox=False, name='Project_Name', order=14, parent_id=None, url='https://todoist.com/showProject?id=project_id', view_style='list')]
     """
     projects = api.get_projects()
+    target_project_name = target_project
     target_project = fp.exactly_one(
-        [project for project in projects if project.name == "Genny"]
+        [project for project in projects if project.name == target_project_name]
     )
     target_project_id = target_project.id
 
