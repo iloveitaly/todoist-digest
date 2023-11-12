@@ -7,7 +7,7 @@ on:
 permissions: read-all
 
 jobs:
-  build-and-publish:
+  sync-metadatag:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
