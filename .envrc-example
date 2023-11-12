@@ -1,0 +1,2 @@
+export TODOIST_API_KEY=KEY
+export TARGET_USER=EMAIL

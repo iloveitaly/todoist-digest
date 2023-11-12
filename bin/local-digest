@@ -1,0 +1,11 @@
+#!/bin/zsh
+
+cd "${0%/*}/.."
+
+# Run the script with the last sync time and target user
+LAST_SYNC=$(<last_sync)
+TARGET_USER=$TARGET_USER
+
+poetry run python run.py --last-synced $LAST_SYNC --target-user $TARGET_USER
+
+date -u +"%Y-%m-%dT%H:%M:%SZ" > last_sync
