@@ -1,0 +1,11 @@
+#!/bin/zsh
+
+cd "${0%/*}/.."
+
+html_output=$(bin/local-digest | pandoc -f markdown -t html)
+
+mkdir -p output
+datestamp=$(date +"%Y-%m-%d-%H%M%S")
+echo "$html_output" > "output/$datestamp.html"
+
+open "output/$datestamp.html"
