@@ -2,8 +2,14 @@
 
 cd "${0%/*}/.."
 
-# Run the script with the last sync time and target user
-LAST_SYNC=$(<last_sync)
+set -eo pipefail
+
+if [[ -f last_sync ]]; then
+  LAST_SYNC=$(<last_sync)
+else
+  LAST_SYNC=$(date -u -v-2w +"%Y-%m-%dT%H:%M:%SZ")
+fi
+
 TARGET_USER=$TARGET_USER
 
 poetry run python run.py \

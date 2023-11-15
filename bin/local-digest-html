@@ -2,10 +2,19 @@
 
 cd "${0%/*}/.."
 
-html_output=$(bin/local-digest | pandoc -f markdown -t html)
+set -eo pipefail
 
-mkdir -p output
+output_dir="output"
+mkdir -p $output_dir
 datestamp=$(date +"%Y-%m-%d-%H%M%S")
-echo "$html_output" > "output/$datestamp.html"
+output_file="$output_dir/$datestamp.html"
 
-open "output/$datestamp.html"
+if [[ -f $output_file ]]; then
+    echo "Error: File $output_file already exists."
+    exit 1
+fi
+
+html_output=$(bin/local-digest | pandoc -f markdown -t html)
+echo "$html_output" > $output_file
+
+open $output_file
