@@ -5,6 +5,7 @@ from functools import lru_cache
 import click
 import funcy as f
 import funcy_pipe as fp
+from dateutil import parser
 from todoist_api_python.api import TodoistAPI
 from todoist_api_python.models import Collaborator
 
@@ -130,12 +131,7 @@ def main(last_synced, target_user, target_project):
         # TODO this seems messy, group_by returns an array
         | fp.walk_values(fp.exactly_one)
     )
-
-    # TODO should be a command line click arg
-    # use 2d ago for now, in py datetime
-    last_synced_date = datetime.datetime.now().replace(
-        tzinfo=datetime.timezone.utc
-    ) - datetime.timedelta(days=2)
+    last_synced_date = parser.parse(last_synced)
 
     # TODO should be a fp way of doing this
     filter_user_id = fp.exactly_one(
