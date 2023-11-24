@@ -1,0 +1,14 @@
+{    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        }
+    },
+    // because we are using mypy
+    "python.analysis.typeCheckingMode": "off",
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.autoFormatStrings": true,
+    "python.analysis.packageIndexDepths": [{"name":"todoist_api_python", "depth":3, "includeAllSymbols": true}],
+    "isort.args":["--profile", "black"]
+}
