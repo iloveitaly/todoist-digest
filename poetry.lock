@@ -12,6 +12,17 @@ files = [
 ]
 
 [[package]]
+name = "backoff"
+version = "2.2.1"
+description = "Function decoration for backoff and retry"
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "backoff-2.2.1-py3-none-any.whl", hash = "sha256:63579f9a0628e06278f7e47b7d7d5b6ce20dc65c5e96a6f3ca99a6adca0396e8"},
+    {file = "backoff-2.2.1.tar.gz", hash = "sha256:03f829f5bb1923180821643f8753b0502c3b682293992485b0eef2807afa5cba"},
+]
+
+[[package]]
 name = "black"
 version = "23.11.0"
 description = "The uncompromising code formatter."
@@ -502,4 +513,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "2961bf5d7229c5d56149cabdc8f4974848e3cbb79fa541a9753481663527fc03"
+content-hash = "f61ce106df121cda11754d5173e1e28ba22c368eba65d9acec488f4f5a208556"
