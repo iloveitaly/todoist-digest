@@ -1,5 +1,6 @@
 import datetime
 import os
+import re
 from functools import lru_cache
 
 import click
@@ -113,13 +114,21 @@ def enrich_date(comment):
     }
 
 
+# each task content could contain markdown, we want to strip all markdown links but retain everything else
+def strip_markdown_links(task_content):
+    pattern = r"\[.*?\]\(.*?\)"
+    return re.sub(pattern, "", task_content)
+
+
 def generate_markdown(task_map, comments_by_task_id):
     markdown = []
     for task_id, comments in comments_by_task_id.items():
         task = task_map[task_id]
 
+        task_content = strip_markdown_links(task.content)
+
         markdown.append(
-            f"## [{task.content}](https://todoist.com/showTask?id={task_id})"
+            f"## [{task_content}](https://todoist.com/showTask?id={task_id})"
         )
 
         markdown.append(comments | fp.lpluck("content") | fp.str_join("---"))

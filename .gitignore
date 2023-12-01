@@ -1,4 +1,7 @@
 .envrc
 
+/.mypy_cache
+/.venv
+
 /last_sync
 /output/
