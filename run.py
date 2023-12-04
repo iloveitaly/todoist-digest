@@ -1,3 +1,7 @@
+from todoist_digest.patch import patch_todoist_api  # isort: split
+
+patch_todoist_api()  # isort: split
+
 import datetime
 import os
 import re
@@ -10,36 +14,7 @@ from dateutil import parser
 from todoist_api_python.api import TodoistAPI
 from todoist_api_python.models import Collaborator
 
-
-# https://github.com/Doist/todoist-api-python/issues/38
-# backoff 5xx errors
-def patch_todoist_api():
-    import backoff
-    import requests
-    import todoist_api_python.http_requests
-
-    patch_targets = ["delete", "get", "json", "post"]
-    for target in patch_targets:
-        original_function = getattr(todoist_api_python.http_requests, target)
-
-        setattr(
-            todoist_api_python.http_requests,
-            f"original_{target}",
-            original_function,
-        )
-
-        patched_function = backoff.on_exception(
-            backoff.expo, requests.exceptions.HTTPError
-        )(original_function)
-
-        setattr(
-            todoist_api_python.http_requests,
-            target,
-            patched_function,
-        )
-
-
-patch_todoist_api()
+from todoist_digest.todoist import todoist_get_item_info, todoist_get_sync_resource
 
 
 @lru_cache(maxsize=None)
@@ -53,35 +28,6 @@ def collaborator_map(api):
     return {collaborator["id"]: collaborator for collaborator in collaborators}
 
 
-# https://github.com/iloveitaly/todoist-api-python/commit/ec83531fae94a2ccd0a4bd6b2d1db95d86b129b6
-def todoist_get_sync_resource(api, resource_type):
-    from todoist_api_python.endpoints import get_sync_url
-    from todoist_api_python.http_requests import post
-
-    endpoint = get_sync_url("sync")
-    data = {
-        "resource_types": [resource_type],
-        "sync_token": "*",
-    }
-    resource_data = post(api._session, endpoint, api._token, data=data)
-    return resource_data
-
-
-# https://developer.todoist.com/sync/v9#get-item-info
-# https://github.com/iloveitaly/todoist-api-python/commit/ec83531fae94a2ccd0a4bd6b2d1db95d86b129b6
-@lru_cache(maxsize=None)
-def todoist_get_item_info(api, item_id):
-    from todoist_api_python.endpoints import get_sync_url
-    from todoist_api_python.http_requests import get
-
-    endpoint = get_sync_url("items/get")
-    data = {
-        "item_id": item_id,
-    }
-    resource_data = get(api._session, endpoint, api._token, params=data)
-    return resource_data
-
-
 def enrich_comment(comment):
     """
     main goal is to add the posted_by_user_id to the comment
@@ -92,6 +38,7 @@ def enrich_comment(comment):
     task_info = todoist_get_item_info(api, task_id)
     task_comments = task_info["notes"]
 
+    # TODO there's got to be a better way to do this with funcy
     # find the comment in the task comments
     matching_comments = [
         task_comment
@@ -106,12 +53,12 @@ def enrich_comment(comment):
     return comment | {"posted_by_user_id": task_comment["posted_uid"]}
 
 
+def parse_todoist_date(date_string):
+    return datetime.datetime.fromisoformat(date_string.replace("Z", "+00:00"))
+
+
 def enrich_date(comment):
-    return comment.__dict__ | {
-        "posted_at_date": datetime.datetime.fromisoformat(
-            comment.posted_at.replace("Z", "+00:00")
-        )
-    }
+    return comment.__dict__ | {"posted_at_date": parse_todoist_date(comment.posted_at)}
 
 
 # each task content could contain markdown, we want to strip all markdown links but retain everything else
@@ -120,7 +67,7 @@ def strip_markdown_links(task_content):
     return re.sub(pattern, "", task_content)
 
 
-def generate_markdown(task_map, comments_by_task_id):
+def generate_markdown_for_comments(task_map, comments_by_task_id):
     markdown = []
     for task_id, comments in comments_by_task_id.items():
         task = task_map[task_id]
@@ -136,7 +83,46 @@ def generate_markdown(task_map, comments_by_task_id):
     return "\n\n".join(markdown)
 
 
+def generate_markdown_for_completed_tasks(completed_tasks):
+    markdown = []
+    for task in completed_tasks:
+        task_content = strip_markdown_links(task.content)
+
+        markdown.append(
+            f"## [{task_content}](https://todoist.com/showTask?id={task.id})"
+        )
+
+    return "\n\n".join(markdown)
+
+
 api = None
+
+# select_dict_keys = f.select_values(lambda value: value[target_key] == target_value)
+# arr_of_dicts | f.select_dict_keys(target_key, target_value)
+# TODO detect first match, like ruby
+
+
+# https://developer.todoist.com/sync/v9/#get-archived-sections
+def get_completed_tasks(api, project_id):
+    """
+    data structure:
+
+    'completed_info',
+    'from_dict',
+    'has_more',
+    'items',
+    'next_cursor',
+    'total'
+    ]
+    """
+
+    completed_items = api.get_completed_items(project_id=project_id, limit=100)
+
+    # TODO we will need to handle this as some point, could use last_seen_id instead
+
+    assert completed_items.has_more is False
+
+    return completed_items.items
 
 
 @click.command()
@@ -192,7 +178,7 @@ def main(last_synced, target_user, target_project):
         | fp.lmap(lambda task: api.get_comments(task_id=task.id))
         | fp.flatten()
         | fp.lmap(enrich_date)
-        # no date filter is applied, we don't want all comments
+        # no date filter is applied by default, we don't want all comments
         | fp.lfilter(lambda comment: comment["posted_at_date"] > last_synced_date)
         # comments do not come with who created the comment by default, we need to hit a separate API to add this to the comment
         | fp.lmap(enrich_comment)
@@ -203,7 +189,19 @@ def main(last_synced, target_user, target_project):
         | fp.group_by(lambda comment: comment["task_id"])
     )
 
-    markdown = generate_markdown(task_map, comments)
+    completed_tasks = get_completed_tasks(api, target_project_id)
+    filtered_completed_tasks = completed_tasks | fp.lfilter(
+        lambda comment: parse_todoist_date(comment["completed_at"]) > last_synced_date
+    )
+
+    markdown = f"""
+# Comments for {target_project_name}
+{generate_markdown_for_comments(task_map, comments)}
+
+# Completed Tasks for {target_project_name}
+{generate_markdown_for_completed_tasks(filtered_completed_tasks)}
+    """
+
     print(markdown)
 
 
