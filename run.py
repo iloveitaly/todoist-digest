@@ -16,6 +16,14 @@ from todoist_api_python.models import Collaborator
 
 from todoist_digest.todoist import todoist_get_item_info, todoist_get_sync_resource
 
+# conditionally import pretty traceback
+try:
+    import pretty_traceback
+
+    pretty_traceback.install()
+except ImportError:
+    pass
+
 
 @lru_cache(maxsize=None)
 def collaborator_map(api):
@@ -97,6 +105,7 @@ def generate_markdown_for_completed_tasks(completed_tasks):
 
 api = None
 
+# some funcy stuff I want to figure out
 # select_dict_keys = f.select_values(lambda value: value[target_key] == target_value)
 # arr_of_dicts | f.select_dict_keys(target_key, target_value)
 # TODO detect first match, like ruby
@@ -191,7 +200,7 @@ def main(last_synced, target_user, target_project):
 
     completed_tasks = get_completed_tasks(api, target_project_id)
     filtered_completed_tasks = completed_tasks | fp.lfilter(
-        lambda comment: parse_todoist_date(comment["completed_at"]) > last_synced_date
+        lambda comment: parse_todoist_date(comment.completed_at) > last_synced_date
     )
 
     markdown = f"""

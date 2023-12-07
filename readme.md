@@ -12,6 +12,19 @@ Run this locally using:
 bin/local-digest-html
 ```
 
+Or run directly:
+
+```shell
+poetry run python run.py \
+  --last-synced "2023-12-04T15:52:48Z" \
+  --target-user user@gmail.com \
+  --target-project ProjectName
+```
+
+## Development
+
+
+
 # TODO
 
 - [ ] hook into <https://github.com/iloveitaly/iloveitaly/blob/main/.github/workflows/follower-notifier.yml>
