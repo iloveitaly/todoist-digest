@@ -15,10 +15,21 @@ bin/local-digest-html
 Or run directly:
 
 ```shell
-poetry run python run.py \
+poetry run python todoist-digest \
   --last-synced "2023-12-04T15:52:48Z" \
   --target-user user@gmail.com \
   --target-project ProjectName
+```
+
+Or, email yourself the digest:
+
+```shell
+poetry run python todoist-digest \
+  --last-synced $LAST_SYNC \
+  --target-user $TARGET_USER \
+  --target-project $TARGET_PROJECT \
+  --email-auth $EMAIL_AUTH \
+  --email-to $EMAIL_TO
 ```
 
 ## Development
