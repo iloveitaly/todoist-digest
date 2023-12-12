@@ -4,6 +4,7 @@ import os
 
 from todoist_api_python.api import TodoistAPI
 
+from run import *
 from todoist_digest.patch import patch_todoist_api
 
 patch_todoist_api()
@@ -14,4 +15,5 @@ assert api_key is not None
 global api
 api = TodoistAPI(api_key)
 
-project_id = 2321686459
+target_project_id = project_id = 2321686459
+last_synced_date = parser.parse("2023-12-08T16:36:30Z")

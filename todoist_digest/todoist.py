@@ -28,3 +28,18 @@ def todoist_get_item_info(api, item_id):
     }
     resource_data = get(api._session, endpoint, api._token, params=data)
     return resource_data
+
+
+def todoist_get_completed_activity(api, task_id):
+    from todoist_api_python.endpoints import get_sync_url
+    from todoist_api_python.http_requests import get
+
+    endpoint = get_sync_url("activity/get")
+    data = {
+        "limit": 100,
+        "event_type": "completed",
+        "object_id": task_id,
+        "object_type": "item",
+    }
+    resource_data = get(api._session, endpoint, api._token, params=data)
+    return resource_data

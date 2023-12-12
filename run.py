@@ -14,7 +14,11 @@ from dateutil import parser
 from todoist_api_python.api import TodoistAPI
 from todoist_api_python.models import Collaborator
 
-from todoist_digest.todoist import todoist_get_item_info, todoist_get_sync_resource
+from todoist_digest.todoist import (
+    todoist_get_completed_activity,
+    todoist_get_item_info,
+    todoist_get_sync_resource,
+)
 
 # conditionally import pretty traceback
 try:
@@ -34,6 +38,17 @@ def collaborator_map(api):
     collaborators = result["collaborators"]
 
     return {collaborator["id"]: collaborator for collaborator in collaborators}
+
+
+def enrich_completed_tasks(api, task):
+    completed_activity = todoist_get_completed_activity(api, task["id"])
+
+    if len(completed_activity["events"]) != 1:
+        raise Exception("Expected exactly one completion activity")
+
+    event = completed_activity["events"][0]
+
+    return task | {"initiator_id": event["initiator_id"]}
 
 
 def enrich_comment(comment):
@@ -65,8 +80,12 @@ def parse_todoist_date(date_string):
     return datetime.datetime.fromisoformat(date_string.replace("Z", "+00:00"))
 
 
+def object_to_dict(obj):
+    return obj.__dict__
+
+
 def enrich_date(comment):
-    return comment.__dict__ | {"posted_at_date": parse_todoist_date(comment.posted_at)}
+    return comment | {"posted_at_date": parse_todoist_date(comment["posted_at"])}
 
 
 # each task content could contain markdown, we want to strip all markdown links but retain everything else
@@ -76,6 +95,9 @@ def strip_markdown_links(task_content):
 
 
 def generate_markdown_for_comments(task_map, comments_by_task_id):
+    if not comments_by_task_id:
+        return "**No comments**"
+
     markdown = []
     for task_id, comments in comments_by_task_id.items():
         task = task_map[task_id]
@@ -92,12 +114,15 @@ def generate_markdown_for_comments(task_map, comments_by_task_id):
 
 
 def generate_markdown_for_completed_tasks(completed_tasks):
+    if not completed_tasks:
+        return "**No completed tasks**"
+
     markdown = []
     for task in completed_tasks:
-        task_content = strip_markdown_links(task.content)
+        task_content = strip_markdown_links(task["content"])
 
         markdown.append(
-            f"## [{task_content}](https://todoist.com/showTask?id={task.id})"
+            f"## [{task_content}](https://todoist.com/showTask?id={task['id']})"
         )
 
     return "\n\n".join(markdown)
@@ -186,6 +211,7 @@ def main(last_synced, target_user, target_project):
         # get all comments for each relevant task
         | fp.lmap(lambda task: api.get_comments(task_id=task.id))
         | fp.flatten()
+        | fp.lmap(object_to_dict)
         | fp.lmap(enrich_date)
         # no date filter is applied by default, we don't want all comments
         | fp.lfilter(lambda comment: comment["posted_at_date"] > last_synced_date)
@@ -198,9 +224,14 @@ def main(last_synced, target_user, target_project):
         | fp.group_by(lambda comment: comment["task_id"])
     )
 
-    completed_tasks = get_completed_tasks(api, target_project_id)
-    filtered_completed_tasks = completed_tasks | fp.lfilter(
-        lambda comment: parse_todoist_date(comment.completed_at) > last_synced_date
+    completed_tasks = (
+        get_completed_tasks(api, target_project_id)
+        | fp.lfilter(
+            lambda comment: parse_todoist_date(comment.completed_at) > last_synced_date
+        )
+        | fp.lmap(object_to_dict)
+        | fp.lmap(f.partial(enrich_completed_tasks, api))
+        | fp.lfilter(lambda comment: comment["initiator_id"] == filter_user_id)
     )
 
     markdown = f"""
@@ -208,7 +239,7 @@ def main(last_synced, target_user, target_project):
 {generate_markdown_for_comments(task_map, comments)}
 
 # Completed Tasks for {target_project_name}
-{generate_markdown_for_completed_tasks(filtered_completed_tasks)}
+{generate_markdown_for_completed_tasks(completed_tasks)}
     """
 
     print(markdown)
