@@ -41,7 +41,8 @@ jobs:
           export NIXPACKS_PYTHON_VERSION="${{ steps.versions.outputs.python }}"
           export NIXPACKS_POETRY_VERSION="${{ steps.versions.outputs.poetry }}"
 
-          nixpacks build . --name ${{ github.repository }} \
+          # this repository.name just contains the `repo` in `owner/repo`
+          nixpacks build . --name ${{ github.event.repository.name }} \
             --env NIXPACKS_PYTHON_VERSION=$NIXPACKS_PYTHON_VERSION --env NIXPACKS_POETRY_VERSION \
             --start-cmd bin/cron-digest
 
@@ -52,8 +53,8 @@ jobs:
 
       - name: Tag Docker Image
         run: |
-          docker tag todoist-digest ghcr.io/${{ github.repository }}/${{ github.repository }}:latest
+          docker tag todoist-digest ghcr.io/${{ github.repository }}/${{ github.event.repository.name }}:latest
 
       - name: Docker push
         run: |
-          docker push ghcr.io/${{ github.repository }}/${{ github.repository }}:latest
+          docker push ghcr.io/${{ github.repository }}/${{ github.event.repository.name }}:latest
