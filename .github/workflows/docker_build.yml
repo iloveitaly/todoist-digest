@@ -40,7 +40,7 @@ jobs:
           export NIXPACKS_PYTHON_VERSION="${{ steps.versions.outputs.python }}"
           export NIXPACKS_POETRY_VERSION="${{ steps.versions.outputs.poetry }}"
 
-          nixpacks build . --name todoist-digest --env NIXPACKS_PYTHON_VERSION --env NIXPACKS_POETRY_VERSION --start-cmd bin/cron-digest
+          nixpacks build . --name todoist-digest --env NIXPACKS_PYTHON_VERSION=$NIXPACKS_PYTHON_VERSION --env NIXPACKS_POETRY_VERSION --start-cmd bin/cron-digest
 
       # - name: Save Docker image
       #   run: |

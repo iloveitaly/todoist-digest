@@ -1,0 +1,31 @@
+#!/bin/zsh
+
+cd "${0%/*}/.."
+
+set -eo pipefail
+
+# Initialize LAST_SYNC with a default value
+last_sync=$(date -u -v-2w +"%Y-%m-%dT%H:%M:%SZ")
+
+while true; do
+    # Get the current day of the week (1-7, 1 is Monday)
+    day_of_week=$(date +%u)
+
+    # Check if it's not Saturday (6) or Sunday (7)
+    if [[ $day_of_week -lt 6 ]]; then
+        TARGET_USER=$TARGET_USER
+
+        poetry run todoist-digest \
+          --last-synced $last_sync \
+          --target-user $TARGET_USER \
+          --target-project $TARGET_PROJECT \
+          --email-auth $EMAIL_AUTH \
+          --email-to $EMAIL_TO
+
+        # Update last_sync for the next run
+        last_sync=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+    fi
+
+    # Sleep for 24 hours before the next check
+    sleep 86400
+done
