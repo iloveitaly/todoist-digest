@@ -1,0 +1,9 @@
+.venv
+.mypy_cache
+.vscode
+.github
+output
+.envrc
+.env
+
+last_sync

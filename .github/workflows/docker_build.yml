@@ -1,0 +1,57 @@
+# https://raw.githubusercontent.com/embedez/ez-cdn/697dbc6dc1496d27b96c57994130f43da7477300/.github/workflows/build.yml
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build_and_push_to_registry:
+    name: Docker Build and Push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # - name: Login to GitHub Container Registry
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      - name: ASDF Parse
+        uses: kota65535/github-asdf-parse-action@v1.1.0
+        id: versions
+
+      # - name: Extract branch name
+      #   shell: bash
+      #   run: |
+      #     echo "BRANCH_NAME=$(echo ${GITHUB_REF##*/})" >> $GITHUB_ENV
+      #     echo "Working On ${{ env.BRANCH_NAME }}"
+
+      - name: Install nixpacks
+        run: |
+          curl -sSL https://nixpacks.com/install.sh | bash
+
+      - name: Build with nixpacks
+        run: |
+          export NIXPACKS_PYTHON_VERSION="${{ steps.versions.outputs.python }}"
+          export NIXPACKS_POETRY_VERSION="${{ steps.versions.outputs.poetry }}"
+
+          nixpacks build . --name todoist-digest --env NIXPACKS_PYTHON_VERSION --env NIXPACKS_POETRY_VERSION --start-cmd bin/cron-digest
+
+      # - name: Save Docker image
+      #   run: |
+      #     mkdir /tmp/docker-images
+      #     docker save ez-cdn:latest > /tmp/docker-images/ez-cdn.tar
+
+      # - name: Load Docker image
+      #   run: |
+      #     docker load -i /tmp/docker-images/ez-cdn.tar
+      #     docker tag ez-cdn ghcr.io/${{ github.repository }}/ez-cdn:${{ env.BRANCH_NAME }}
+
+      # - name: Docker push
+      #   run: |
+      #     docker push ghcr.io/${{ github.repository }}/ez-cdn:${{ env.BRANCH_NAME }}
