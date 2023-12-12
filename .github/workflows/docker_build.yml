@@ -44,8 +44,8 @@ jobs:
           # this repository.name just contains the `repo` in `owner/repo`
           nixpacks build . --name ${{ github.event.repository.name }} \
             --env NIXPACKS_PYTHON_VERSION=$NIXPACKS_PYTHON_VERSION --env NIXPACKS_POETRY_VERSION \
+            --label org.opencontainers.image.source=https://github.com/${{ github.repository }} \
             --start-cmd bin/cron-digest
-            --label org.opencontainers.image.source=https://github.com/${{ github.repository }}
 
       # - name: Save Docker image
       #   run: |
