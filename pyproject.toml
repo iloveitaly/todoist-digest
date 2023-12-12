@@ -21,8 +21,8 @@ backoff = "^2.2.1"
 isort = "5.11.5"
 black = "^23.10.1"
 pylint = "^3.0.2"
+pyright = "^1.1.339"
 
-# --float-to-top
 [tool.isort]
 profile = "black"
 float_to_top = true
