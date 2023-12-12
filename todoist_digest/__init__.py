@@ -1,3 +1,5 @@
+from todoist_digest.email import send_markdown_email
+
 from todoist_digest.patch import patch_todoist_api  # isort: split
 
 patch_todoist_api()  # isort: split
@@ -11,6 +13,7 @@ import click
 import funcy as f
 import funcy_pipe as fp
 from dateutil import parser
+from funcy_pipe.pipe import PipeFirst
 from todoist_api_python.api import TodoistAPI
 from todoist_api_python.models import Collaborator
 
@@ -27,6 +30,17 @@ try:
     pretty_traceback.install()
 except ImportError:
     pass
+
+
+# https://github.com/Suor/funcy/pull/140
+def where_attr(objects, **cond):
+    items = cond.items()
+    match = lambda obj: all(hasattr(obj, k) and getattr(obj, k) == v for k, v in items)
+    return filter(match, objects)
+
+
+f.where_attr = where_attr
+fp.where_attr = PipeFirst(where_attr)
 
 
 @lru_cache(maxsize=None)
@@ -90,13 +104,13 @@ def enrich_date(comment):
 
 # each task content could contain markdown, we want to strip all markdown links but retain everything else
 def strip_markdown_links(task_content):
-    pattern = r"\[.*?\]\(.*?\)"
-    return re.sub(pattern, "", task_content)
+    pattern = r"\[(.*?)\]\(.*?\)"
+    return re.sub(pattern, "\\1", task_content)
 
 
 def generate_markdown_for_comments(task_map, comments_by_task_id):
     if not comments_by_task_id:
-        return "**No comments**"
+        return "*No comments*"
 
     markdown = []
     for task_id, comments in comments_by_task_id.items():
@@ -115,7 +129,7 @@ def generate_markdown_for_comments(task_map, comments_by_task_id):
 
 def generate_markdown_for_completed_tasks(completed_tasks):
     if not completed_tasks:
-        return "**No completed tasks**"
+        return "*No completed tasks*"
 
     markdown = []
     for task in completed_tasks:
@@ -129,11 +143,6 @@ def generate_markdown_for_completed_tasks(completed_tasks):
 
 
 api = None
-
-# some funcy stuff I want to figure out
-# select_dict_keys = f.select_values(lambda value: value[target_key] == target_value)
-# arr_of_dicts | f.select_dict_keys(target_key, target_value)
-# TODO detect first match, like ruby
 
 
 # https://developer.todoist.com/sync/v9/#get-archived-sections
@@ -163,21 +172,22 @@ def get_completed_tasks(api, project_id):
 @click.option("--last-synced", required=True, help="The last synced date.")
 @click.option("--target-user", required=True, help="The target user.")
 @click.option("--target-project", required=True, help="The target project.")
-def main(last_synced, target_user, target_project):
+@click.option("--email-auth", required=False, help="Authorization URL for SMTP emailer")
+@click.option("--email-to", required=False, help="Email to send digest to")
+def cli(last_synced, target_user, target_project, email_auth, email_to):
     api_key = os.getenv("TODOIST_API_KEY")
     assert api_key is not None
 
     global api
     api = TodoistAPI(api_key)
 
+    target_project_name = target_project
+
     """
     Project(color='blue', comment_count=0, id='project_id', is_favorite=False, is_inbox_project=False, is_shared=True, is_team_inbox=False, name='Project_Name', order=14, parent_id=None, url='https://todoist.com/showProject?id=project_id', view_style='list')]
     """
     projects = api.get_projects()
-    target_project_name = target_project
-    target_project = fp.exactly_one(
-        [project for project in projects if project.name == target_project_name]
-    )
+    target_project = projects | fp.where_attr(name=target_project_name) | fp.first()
     target_project_id = target_project.id
 
     """
@@ -188,18 +198,18 @@ def main(last_synced, target_user, target_project):
     task_map = (
         tasks
         | fp.group_by(lambda task: task.id)
-        # TODO this seems messy, group_by returns an array
+        # TODO this seems messy, group_by returns an array as the value so we extract the first element
         | fp.walk_values(fp.exactly_one)
     )
+
     last_synced_date = parser.parse(last_synced)
 
-    # TODO should be a fp way of doing this
-    filter_user_id = fp.exactly_one(
-        [
-            collaborator_id
-            for collaborator_id, collaborator in collaborator_map(api).items()
-            if collaborator["email"] == target_user
-        ]
+    filter_user_id = (
+        collaborator_map(api).values()
+        | fp.where(email=target_user)
+        | fp.pluck("id")
+        # exactly_once would be better here, but less performant
+        | fp.first()
     )
 
     """
@@ -244,6 +254,17 @@ def main(last_synced, target_user, target_project):
 
     print(markdown)
 
+    if email_auth:
+        now_time_formatted = datetime.datetime.now().strftime("%m/%d")
+        last_synced_date_formatted = last_synced_date.strftime("%m/%d")
+
+        send_markdown_email(
+            email_auth,
+            markdown,
+            f"{last_synced_date_formatted}-{now_time_formatted} Todoist Digest for {target_project_name}",
+            email_to,
+        )
+
 
 if __name__ == "__main__":
-    main()
+    cli()

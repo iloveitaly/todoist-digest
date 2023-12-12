@@ -12,9 +12,11 @@ fi
 
 TARGET_USER=$TARGET_USER
 
-poetry run python run.py \
+poetry run todoist-digest \
   --last-synced $LAST_SYNC \
   --target-user $TARGET_USER \
-  --target-project $TARGET_PROJECT
+  --target-project $TARGET_PROJECT \
+  --email-auth $EMAIL_AUTH \
+  --email-to $EMAIL_TO
 
 date -u +"%Y-%m-%dT%H:%M:%SZ" > last_sync
