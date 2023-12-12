@@ -45,6 +45,7 @@ jobs:
           nixpacks build . --name ${{ github.event.repository.name }} \
             --env NIXPACKS_PYTHON_VERSION=$NIXPACKS_PYTHON_VERSION --env NIXPACKS_POETRY_VERSION \
             --start-cmd bin/cron-digest
+            --label org.opencontainers.image.source=https://github.com/${{ github.repository }}
 
       # - name: Save Docker image
       #   run: |
@@ -57,4 +58,4 @@ jobs:
 
       - name: Docker push
         run: |
-          docker push ghcr.io/${{ github.repository }}/${{ github.event.repository.name }}:latest
+          docker push ghcr.io/${{ github.repository }}:latest
