@@ -17,5 +17,5 @@ fi
 html_output=$(bin/local-digest | pandoc -f markdown -t html)
 echo "$html_output" > $output_file
 
-echo $output_file
+echo ${output_file:A}
 open $output_file
