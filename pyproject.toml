@@ -30,3 +30,6 @@ float_to_top = true
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+todoist-digest = "todoist_digest:main"
