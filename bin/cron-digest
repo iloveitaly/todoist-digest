@@ -1,11 +1,11 @@
-#!/bin/zsh
+#!/bin/bash
 
 cd "${0%/*}/.."
 
 set -eo pipefail
 
 # Initialize LAST_SYNC with a default value of 2 weeks ago
-LAST_SYNC=$(date -u -v-2w +"%Y-%m-%dT%H:%M:%SZ")
+LAST_SYNC=$(date -u -d '2 weeks ago' +"%Y-%m-%dT%H:%M:%SZ")
 
 # Set SCHEDULE variable to 6 AM by default if not already set
 SCHEDULE=${SCHEDULE:-"6"}
@@ -13,7 +13,7 @@ SCHEDULE=${SCHEDULE:-"6"}
 while true; do
     # Get the current time and the time for the next scheduled run
     now=$(date +%s)
-    next_run=$(date -v+1d -v${SCHEDULE}H -v0M -v0S +%s)
+    next_run=$(date -d "tomorrow ${SCHEDULE}:00:00 UTC" +%s)
 
     # Calculate the time to sleep until the next scheduled run
     sleep_seconds=$((next_run - now))
