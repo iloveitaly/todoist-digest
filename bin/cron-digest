@@ -4,10 +4,23 @@ cd "${0%/*}/.."
 
 set -eo pipefail
 
-# Initialize LAST_SYNC with a default value
-last_sync=$(date -u -v-2w +"%Y-%m-%dT%H:%M:%SZ")
+# Initialize LAST_SYNC with a default value of 2 weeks ago
+LAST_SYNC=$(date -u -v-2w +"%Y-%m-%dT%H:%M:%SZ")
+
+# Set SCHEDULE variable to 6 AM by default if not already set
+SCHEDULE=${SCHEDULE:-"6"}
 
 while true; do
+    # Get the current time and the time for the next scheduled run
+    now=$(date +%s)
+    next_run=$(date -v+1d -v${SCHEDULE}H -v0M -v0S +%s)
+
+    # Calculate the time to sleep until the next scheduled run
+    sleep_seconds=$((next_run - now))
+
+    # Sleep for the calculated duration
+    sleep "$sleep_seconds"
+
     # Get the current day of the week (1-7, 1 is Monday)
     day_of_week=$(date +%u)
 
@@ -16,16 +29,13 @@ while true; do
         TARGET_USER=$TARGET_USER
 
         poetry run todoist-digest \
-          --last-synced $last_sync \
+          --last-synced $LAST_SYNC \
           --target-user $TARGET_USER \
           --target-project $TARGET_PROJECT \
           --email-auth $EMAIL_AUTH \
           --email-to $EMAIL_TO
 
-        # Update last_sync for the next run
-        last_sync=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        # Update LAST_SYNC for the next run
+        LAST_SYNC=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
     fi
-
-    # Sleep for 24 hours before the next check
-    sleep 86400
 done
