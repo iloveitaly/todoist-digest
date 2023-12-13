@@ -11,10 +11,6 @@ jobs:
     name: Docker Build and Push
     runs-on: ubuntu-latest
     env:
-      # use repo name (not including `owner`!) as image name
-      # this repository.name just contains the `repo` in `owner/repo`
-      # image_name: ${{ github.event.repository.name }}
-      # image_name: ${{ github.repository }}
       image_name: ghcr.io/${{ github.repository }}
       image_tag: latest
     steps:
@@ -39,23 +35,13 @@ jobs:
 
       - name: Build with nixpacks
         run: |
-          export NIXPACKS_PYTHON_VERSION="${{ steps.versions.outputs.python }}"
-          export NIXPACKS_POETRY_VERSION="${{ steps.versions.outputs.poetry }}"
-
+          # label is important here in order for the package to show up on the github repo
           nixpacks build . --name ${{ env.image_name }} \
-            --env NIXPACKS_PYTHON_VERSION=$NIXPACKS_PYTHON_VERSION --env NIXPACKS_POETRY_VERSION \
+            --env NIXPACKS_PYTHON_VERSION="${{ steps.versions.outputs.python }}" \
+            --env NIXPACKS_POETRY_VERSION="${{ steps.versions.outputs.poetry }}" \
             --label org.opencontainers.image.source=https://github.com/${{ github.repository }} \
             --tag latest \
             --start-cmd bin/cron-digest
-
-      # - name: Save Docker image
-      #   run: |
-      #     mkdir /tmp/docker-images
-      #     docker save ez-cdn:latest > /tmp/docker-images/ez-cdn.tar
-
-      # - name: Tag Docker Image
-      #   run: |
-      #     docker tag ${{ env.image_name }} ghcr.io/${{ github.repository }}:latest
 
       - name: Docker push
         run: |
