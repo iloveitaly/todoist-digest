@@ -1,7 +1,5 @@
-from todoist_digest.email import send_markdown_email
-
 from todoist_digest.patch import patch_todoist_api  # isort: split
-
+import todoist_digest.funcy_ext  # isort: split
 patch_todoist_api()  # isort: split
 
 import datetime
@@ -13,10 +11,10 @@ import click
 import funcy as f
 import funcy_pipe as fp
 from dateutil import parser
-from funcy_pipe.pipe import PipeFirst
 from todoist_api_python.api import TodoistAPI
 from todoist_api_python.models import Collaborator
 
+from todoist_digest.email import send_markdown_email
 from todoist_digest.todoist import (
     todoist_get_completed_activity,
     todoist_get_item_info,
@@ -30,17 +28,6 @@ try:
     pretty_traceback.install()
 except ImportError:
     pass
-
-
-# https://github.com/Suor/funcy/pull/140
-def where_attr(objects, **cond):
-    items = cond.items()
-    match = lambda obj: all(hasattr(obj, k) and getattr(obj, k) == v for k, v in items)
-    return filter(match, objects)
-
-
-f.where_attr = where_attr
-fp.where_attr = PipeFirst(where_attr)
 
 
 @lru_cache(maxsize=None)
@@ -122,7 +109,24 @@ def generate_markdown_for_comments(task_map, comments_by_task_id):
             f"## [{task_content}](https://todoist.com/showTask?id={task_id})"
         )
 
-        markdown.append(comments | fp.lpluck("content") | fp.str_join("---"))
+        def add_content_to_attachments(comment):
+            if comment["content"] != "":
+                return comment
+
+            return comment | {"content": comment["attachment"].file_name}
+
+        markdown.append(
+            comments
+            | fp.map(add_content_to_attachments)
+            | fp.map(lambda comment: comment | {"content": strip_markdown_links(comment["content"])})
+            # | fp.where_not(content='')
+            # TODO this is a custom pluck!
+            | fp.pluck(["posted_at_date", "content"])
+            # TODO maybe truncate comments here
+            | fp.map(lambda t: f"_{t[0].strftime("%m/%d")}_: {t[1]}")
+            # separate each comment with a line
+            | fp.str_join("\n---\n")
+        )
 
     return "\n\n".join(markdown)
 
