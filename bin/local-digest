@@ -7,7 +7,14 @@ set -eo pipefail
 if [[ -f last_sync ]]; then
   LAST_SYNC=$(<last_sync)
 else
-  LAST_SYNC=$(date -u -v-2w +"%Y-%m-%dT%H:%M:%SZ")
+  # Check if we are on macOS or Linux
+  if [[ "$(uname)" == "Darwin" ]]; then
+    # macOS (BSD) date command
+    LAST_SYNC=$(date -u -v-2w +"%Y-%m-%dT%H:%M:%SZ")
+  else
+    # Linux (GNU) date command
+    LAST_SYNC=$(date -u -d '2 weeks ago' +"%Y-%m-%dT%H:%M:%SZ")
+  fi
 fi
 
 TARGET_USER=$TARGET_USER

@@ -4,16 +4,38 @@ cd "${0%/*}/.."
 
 set -eo pipefail
 
+# Function to get a date in the past (2 weeks ago)
+get_past_date() {
+  if [[ "$(uname)" == "Darwin" ]]; then
+    # macOS (BSD) date command
+    date -u -v-2w +"%Y-%m-%dT%H:%M:%SZ"
+  else
+    # Linux (GNU) date command
+    date -u -d '2 weeks ago' +"%Y-%m-%dT%H:%M:%SZ"
+  fi
+}
+
 # Initialize LAST_SYNC with a default value of 2 weeks ago
-LAST_SYNC=$(date -u -d '2 weeks ago' +"%Y-%m-%dT%H:%M:%SZ")
+LAST_SYNC=$(get_past_date)
 
 # Set SCHEDULE variable to 6 AM by default if not already set
 SCHEDULE=${SCHEDULE:-"6"}
 
+# Function to get the next run timestamp
+get_next_run_timestamp() {
+  if [[ "$(uname)" == "Darwin" ]]; then
+    # macOS (BSD) date command
+    date -j -f "%H" "${SCHEDULE}" -v+1d +"%s"
+  else
+    # Linux (GNU) date command
+    date -d "tomorrow ${SCHEDULE}:00:00 UTC" +%s
+  fi
+}
+
 while true; do
     # Get the current time and the time for the next scheduled run
     now=$(date +%s)
-    next_run=$(date -d "tomorrow ${SCHEDULE}:00:00 UTC" +%s)
+    next_run=$(get_next_run_timestamp)
 
     # Calculate the time to sleep until the next scheduled run
     sleep_seconds=$((next_run - now))
