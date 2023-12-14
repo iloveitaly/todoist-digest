@@ -4,6 +4,8 @@
 
 This is a simple project which generates a digest of all comments by a particular user on a particular project.
 
+This project was also a good excuse to play around and test some functional programming/data manipulation tooling I've been messing with ([funcy](https://github.com/Suor/funcy), [funcy-pipe](https://github.com/iloveitaly/funcy-pipe), and [whatever](https://github.com/Suor/whatever)).
+
 ## Usage
 
 ### Docker
