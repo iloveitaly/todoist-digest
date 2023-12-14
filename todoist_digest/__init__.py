@@ -1,5 +1,6 @@
 from todoist_digest.patch import patch_todoist_api  # isort: split
 import todoist_digest.funcy_ext  # isort: split
+
 patch_todoist_api()  # isort: split
 
 import datetime
@@ -12,7 +13,8 @@ import funcy as f
 import funcy_pipe as fp
 from dateutil import parser
 from todoist_api_python.api import TodoistAPI
-from todoist_api_python.models import Collaborator
+from todoist_api_python.models import Collaborator, Section
+from whatever import that
 
 from todoist_digest.email import send_markdown_email
 from todoist_digest.todoist import (
@@ -21,6 +23,8 @@ from todoist_digest.todoist import (
     todoist_get_sync_resource,
 )
 
+name = "todoist_digest"
+
 # conditionally import pretty traceback
 try:
     import pretty_traceback
@@ -28,6 +32,17 @@ try:
     pretty_traceback.install()
 except ImportError:
     pass
+
+
+@lru_cache(maxsize=None)
+def section_map(api: TodoistAPI) -> dict[int, Section]:
+    # TODO should probably filter by project_id
+    sections = api.get_sections()
+
+    # TODO this api response does not seem to page
+    # assert sections.has_more is False
+
+    return sections | fp.group_by(f.compose(int, that.project_id))
 
 
 @lru_cache(maxsize=None)
@@ -115,17 +130,23 @@ def generate_markdown_for_comments(task_map, comments_by_task_id):
 
             return comment | {"content": comment["attachment"].file_name}
 
+        def format_content(comment):
+            formatted_date = comment["posted_at_date"].strftime("%m/%d")
+            content = comment["content"]
+
+            return f"_{formatted_date}_: {content}"
+
         markdown.append(
             comments
             | fp.map(add_content_to_attachments)
-            | fp.map(lambda comment: comment | {"content": strip_markdown_links(comment["content"])})
+            | fp.map(
+                lambda comment: comment
+                | {"content": strip_markdown_links(comment["content"])}
+            )
             # | fp.where_not(content='')
-            # TODO this is a custom pluck!
-            | fp.pluck(["posted_at_date", "content"])
-            # TODO maybe truncate comments here
-            | fp.map(lambda t: f"_{t[0].strftime("%m/%d")}_: {t[1]}")
+            | fp.map(format_content)
             # separate each comment with a line
-            | fp.str_join("\n---\n")
+            | fp.str_join("\n\n---\n\n")
         )
 
     return "\n\n".join(markdown)
@@ -146,12 +167,17 @@ def generate_markdown_for_completed_tasks(completed_tasks):
     return "\n\n".join(markdown)
 
 
-api = None
+# TODO should stop using globals, messes with reloads
+api_key = os.getenv("TODOIST_API_KEY")
+assert api_key is not None
+api = TodoistAPI(api_key)
 
 
 # https://developer.todoist.com/sync/v9/#get-archived-sections
 def get_completed_tasks(api, project_id):
     """
+    you have to iterate over all sections in a project to get all completed tasks
+
     data structure:
 
     'completed_info',
@@ -163,13 +189,21 @@ def get_completed_tasks(api, project_id):
     ]
     """
 
-    completed_items = api.get_completed_items(project_id=project_id, limit=100)
+    projects_and_sections = [
+        {"section_id": section_id}
+        for section_id in section_map(api)[int(project_id)] | fp.lmap(that.id)
+    ] + [{"project_id": project_id}]
+
+    # TODO could be neat if there was some sort of kwargs curry here
+    results = projects_and_sections | fp.lmap(
+        lambda args: api.get_completed_items(**(args | {"limit": 100}))
+    )
 
     # TODO we will need to handle this as some point, could use last_seen_id instead
+    # TODO this seems messy, got to be an easier way to check for a null set here
+    assert results | fp.where_attr(has_more=True) | fp.to_list() == []
 
-    assert completed_items.has_more is False
-
-    return completed_items.items
+    return results | fp.flatten() | fp.lmap(that.items) | fp.flatten() | fp.to_list()
 
 
 @click.command()
@@ -179,12 +213,7 @@ def get_completed_tasks(api, project_id):
 @click.option("--email-auth", required=False, help="Authorization URL for SMTP emailer")
 @click.option("--email-to", required=False, help="Email to send digest to")
 def cli(last_synced, target_user, target_project, email_auth, email_to):
-    api_key = os.getenv("TODOIST_API_KEY")
-    assert api_key is not None
-
     global api
-    api = TodoistAPI(api_key)
-
     target_project_name = target_project
 
     """
@@ -249,10 +278,10 @@ def cli(last_synced, target_user, target_project, email_auth, email_to):
     )
 
     markdown = f"""
-# Comments for {target_project_name}
+# Comments on Project {target_project_name}
 {generate_markdown_for_comments(task_map, comments)}
 
-# Completed Tasks for {target_project_name}
+# Completed Tasks on Project {target_project_name}
 {generate_markdown_for_completed_tasks(completed_tasks)}
     """
 
