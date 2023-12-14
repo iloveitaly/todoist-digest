@@ -6,6 +6,28 @@ This is a simple project which generates a digest of all comments by a particula
 
 ## Usage
 
+### Docker
+
+```shell
+docker pull ghcr.io/iloveitaly/todoist-digest:latest
+docker run --env-file .env ghcr.io/iloveitaly/todoist-digest:latest
+```
+
+Want to run a one off execution?
+
+```shell
+docker run --env-file .env ghcr.io/iloveitaly/todoist-digest:latest todoist-digest --help
+```
+
+Want to inspect the docker container?
+
+```shell
+docker run -it ghcr.io/iloveitaly/todoist-digest:latest bash
+```
+
+### Locally
+
+
 Run this locally using:
 
 ```shell
@@ -15,7 +37,7 @@ bin/local-digest-html
 Or run directly:
 
 ```shell
-poetry run python todoist-digest \
+poetry run todoist-digest \
   --last-synced "2023-12-04T15:52:48Z" \
   --target-user user@gmail.com \
   --target-project ProjectName
@@ -24,7 +46,7 @@ poetry run python todoist-digest \
 Or, email yourself the digest:
 
 ```shell
-poetry run python todoist-digest \
+poetry run todoist-digest \
   --last-synced $LAST_SYNC \
   --target-user $TARGET_USER \
   --target-project $TARGET_PROJECT \
@@ -34,8 +56,21 @@ poetry run python todoist-digest \
 
 ## Development
 
+### Docker Build
 
+This repo uses [nixpacks](https://nixpacks.com/docs/getting-started) for building a Dockerfile. Why? Because I like trying new things.
 
-# TODO
+Until [asdf support](https://github.com/railwayapp/nixpacks/pull/1026) is built into nixpacks, you'll have to do something like:
 
-- [ ] hook into <https://github.com/iloveitaly/iloveitaly/blob/main/.github/workflows/follower-notifier.yml>
+```shell
+export NIXPACKS_POETRY_VERSION=$(asdf-current-version poetry)
+export NIXPACKS_PYTHON_VERSION=$(asdf-current-version python)
+```
+
+(asdf-current-version is a function [I have in my shell](https://github.com/iloveitaly/dotfiles/blob/d597a90cd84fb4c5c47efa78255e45a537f1155c/.functions#L17-L21) which returns the current version of a tool)
+
+In order to pass the py + poetry versions properly to nixpacks:
+
+```shell
+nixpacks build . --name todoist-digest --env NIXPACKS_PYTHON_VERSION --env NIXPACKS_POETRY_VERSION --start-cmd bin/cron-digest
+```
