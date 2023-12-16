@@ -79,6 +79,8 @@ nixpacks build . --name todoist-digest --env NIXPACKS_PYTHON_VERSION --env NIXPA
 
 ### Run with ipdb
 
+Open up an exception when there's an exception:
+
 ```shell
 ipdb3 $(which todoist-digest) --last-synced 2023-12-14T13:38:25Z ...
 ```
