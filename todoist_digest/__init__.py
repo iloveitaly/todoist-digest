@@ -59,8 +59,10 @@ def collaborator_map(api):
 def enrich_completed_tasks(api, task):
     completed_activity = todoist_get_completed_activity(api, task["id"])
 
+    # there can be multiple completed events, I'm guessing if people complete > uncomplete > complete a task
     if len(completed_activity["events"]) != 1:
-        raise Exception("Expected exactly one completion activity")
+        # raise Exception("Expected exactly one completion activity")
+        pass
 
     event = completed_activity["events"][0]
 
