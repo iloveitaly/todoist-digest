@@ -6,6 +6,10 @@ on:
       - main
       - master
 
+# by default, permissions are read-only, read + write is required for git pushes
+permissions:
+  contents: write
+
 jobs:
   build_and_push_to_registry:
     name: Docker Build and Push
