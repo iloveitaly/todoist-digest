@@ -169,10 +169,10 @@ def generate_markdown_for_completed_tasks(completed_tasks):
     return "\n\n".join(markdown)
 
 
-# TODO should stop using globals, messes with reloads
-api_key = os.getenv("TODOIST_API_KEY")
-assert api_key is not None
-api = TodoistAPI(api_key)
+def get_api():
+    api_key = os.getenv("TODOIST_API_KEY")
+    assert api_key is not None
+    return TodoistAPI(api_key)
 
 
 # https://developer.todoist.com/sync/v9/#get-archived-sections
@@ -215,7 +215,7 @@ def get_completed_tasks(api, project_id):
 @click.option("--email-auth", required=False, help="Authorization URL for SMTP emailer")
 @click.option("--email-to", required=False, help="Email to send digest to")
 def cli(last_synced, target_user, target_project, email_auth, email_to):
-    global api
+    api = get_api()
     target_project_name = target_project
 
     """
