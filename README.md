@@ -76,3 +76,9 @@ In order to pass the py + poetry versions properly to nixpacks:
 ```shell
 nixpacks build . --name todoist-digest --env NIXPACKS_PYTHON_VERSION --env NIXPACKS_POETRY_VERSION --start-cmd bin/cron-digest
 ```
+
+### Run with ipdb
+
+```shell
+ipdb3 $(which todoist-digest) --last-synced 2023-12-14T13:38:25Z ...
+```

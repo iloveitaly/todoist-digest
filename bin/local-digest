@@ -2,7 +2,7 @@
 
 cd "${0%/*}/.."
 
-set -eo pipefail
+set -eoux pipefail
 
 if [[ -f last_sync ]]; then
   LAST_SYNC=$(<last_sync)
@@ -19,7 +19,8 @@ fi
 
 TARGET_USER=$TARGET_USER
 
-poetry run todoist-digest \
+# assumes we are alread in the poetry env
+todoist-digest \
   --last-synced $LAST_SYNC \
   --target-user $TARGET_USER \
   --target-project $TARGET_PROJECT \

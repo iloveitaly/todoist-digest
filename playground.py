@@ -4,6 +4,7 @@ import os
 
 from todoist_api_python.api import TodoistAPI
 
+# TODO this does not autoreload, I wonder if there is a way to issue a custom hook
 from todoist_digest import *
 from todoist_digest.patch import patch_todoist_api
 
