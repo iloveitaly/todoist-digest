@@ -1,4 +1,13 @@
-# 0.2.0 (2023-12-16)
+## [0.2.1](https://github.com/iloveitaly/todoist-digest/compare/v0.2.0...v0.2.1) (2023-12-18)
+
+
+### Bug Fixes
+
+* add note about which user the digest is for ([8f3caf9](https://github.com/iloveitaly/todoist-digest/commit/8f3caf97c509238bf893e374ff1242b65ea3e924))
+
+
+
+# [0.2.0](https://github.com/iloveitaly/todoist-digest/compare/2f893709da2cf3a0f715125053af705fc3adbc4c...v0.2.0) (2023-12-16)
 
 
 ### Bug Fixes
