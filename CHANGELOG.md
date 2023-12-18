@@ -1,3 +1,12 @@
+## [0.2.4](https://github.com/iloveitaly/todoist-digest/compare/v0.2.3...v0.2.4) (2023-12-18)
+
+
+### Bug Fixes
+
+* build image for arm ([a1b3774](https://github.com/iloveitaly/todoist-digest/commit/a1b377450cba4266559d92fdc2c898c21f5714a4))
+
+
+
 ## [0.2.3](https://github.com/iloveitaly/todoist-digest/compare/v0.2.2...v0.2.3) (2023-12-18)
 
 
