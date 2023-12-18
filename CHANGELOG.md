@@ -1,3 +1,12 @@
+## [0.2.3](https://github.com/iloveitaly/todoist-digest/compare/v0.2.2...v0.2.3) (2023-12-18)
+
+
+### Bug Fixes
+
+* log when email is sent ([192ca28](https://github.com/iloveitaly/todoist-digest/commit/192ca28e7bd17d9dbc21ed27d791d230e28318fc))
+
+
+
 ## [0.2.2](https://github.com/iloveitaly/todoist-digest/compare/v0.2.1...v0.2.2) (2023-12-18)
 
 
