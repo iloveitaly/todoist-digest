@@ -16,14 +16,14 @@ funcy-pipe = "^0.5.0"
 # funcy-pipe = { develop = true, path = "../../python/funcy-pipe" }
 python-dateutil = "^2.8.2"
 backoff = "^2.2.1"
-markdown2 = "^2.4.11"
+markdown2 = "^2.4.12"
 whatever = "^0.7"
 
 [tool.poetry.group.dev.dependencies]
 isort = "5.11.5"
 black = "^23.12.0"
 pylint = "^3.0.3"
-pyright = "^1.1.340"
+pyright = "^1.1.341"
 
 [tool.isort]
 profile = "black"
