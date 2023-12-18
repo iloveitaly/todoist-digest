@@ -1,9 +1,12 @@
+import logging
+
 from todoist_digest.patch import patch_todoist_api  # isort: split
 import todoist_digest.funcy_ext  # isort: split
 
 patch_todoist_api()  # isort: split
 
 import datetime
+import logging
 import os
 import re
 from functools import lru_cache
@@ -23,7 +26,7 @@ from todoist_digest.todoist import (
     todoist_get_sync_resource,
 )
 
-name = "todoist_digest"
+logger = logging.getLogger(__name__)
 
 # conditionally import pretty traceback
 try:
@@ -63,6 +66,10 @@ def enrich_completed_tasks(api, task):
     if len(completed_activity["events"]) != 1:
         # raise Exception("Expected exactly one completion activity")
         pass
+
+    if len(completed_activity["events"]) == 0:
+        logger.warning("Expected at least one completion activity")
+        return task | {"initiator_id": None}
 
     event = completed_activity["events"][0]
 
