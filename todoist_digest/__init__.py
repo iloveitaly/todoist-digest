@@ -75,6 +75,7 @@ def enrich_comment(comment):
     so we can figure out who posted this
     """
 
+    api = get_api()
     task_id = comment["task_id"]
     task_info = todoist_get_item_info(api, task_id)
     task_comments = task_info["notes"]
@@ -280,6 +281,8 @@ def cli(last_synced, target_user, target_project, email_auth, email_to):
     )
 
     markdown = f"""
+_targeting user {target_user} on project {target_project_name}_
+
 # Comments on Project {target_project_name}
 {generate_markdown_for_comments(task_map, comments)}
 
