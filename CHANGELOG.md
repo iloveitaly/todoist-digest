@@ -1,3 +1,14 @@
+## [0.2.6](https://github.com/iloveitaly/todoist-digest/compare/v0.2.5...v0.2.6) (2023-12-21)
+
+
+### Bug Fixes
+
+* add apscheduler for cron process ([0f5f12c](https://github.com/iloveitaly/todoist-digest/commit/0f5f12c27001d1d94d74d409ee540220601d5807))
+* support cron syntax ([737df95](https://github.com/iloveitaly/todoist-digest/commit/737df95cb802586341d81e8dc192d0c2a0f49a8f))
+* use cron scheduler ([69c9b20](https://github.com/iloveitaly/todoist-digest/commit/69c9b2064deb03459a03e246fdce6cde04dd7559))
+
+
+
 ## [0.2.5](https://github.com/iloveitaly/todoist-digest/compare/v0.2.4...v0.2.5) (2023-12-21)
 
 
@@ -37,15 +48,6 @@
 ### Bug Fixes
 
 * no valid completed activity ([a86d6d0](https://github.com/iloveitaly/todoist-digest/commit/a86d6d0d785d842821e33460b553b101f90b6ab6))
-
-
-
-## [0.2.1](https://github.com/iloveitaly/todoist-digest/compare/v0.2.0...v0.2.1) (2023-12-18)
-
-
-### Bug Fixes
-
-* add note about which user the digest is for ([8f3caf9](https://github.com/iloveitaly/todoist-digest/commit/8f3caf97c509238bf893e374ff1242b65ea3e924))
 
 
 
