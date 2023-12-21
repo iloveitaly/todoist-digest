@@ -2,6 +2,7 @@ import os
 from datetime import datetime, timedelta
 
 from apscheduler.schedulers.background import BlockingScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 from todoist_digest import main
 
@@ -18,9 +19,12 @@ def is_weekday():
 
 def job():
     if not is_weekday():
+        print("Skipping weekend")
         return
 
     global last_synced
+
+    print(f"Running job with last_synced: {last_synced}")
 
     main(
         last_synced,
@@ -39,8 +43,10 @@ def cron():
 
     schedule = os.environ.get("SCHEDULE", "0 6 * * *")
 
+    print(f"Running on schedule: {schedule}")
+
     scheduler = BlockingScheduler()
-    scheduler.add_job(job, "cron", hour=schedule)
+    scheduler.add_job(job, CronTrigger.from_crontab(schedule))
     scheduler.start()
 
 
