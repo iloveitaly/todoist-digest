@@ -106,8 +106,7 @@ jobs:
             --env NIXPACKS_PYTHON_VERSION="${{ steps.versions.outputs.python }}" \
             --env NIXPACKS_POETRY_VERSION="${{ steps.versions.outputs.poetry }}" \
             --label org.opencontainers.image.source=https://github.com/${{ github.repository }} \
-            --tag latest \
-            --start-cmd bin/cron-digest
+            --tag latest
 
       - name: Docker push
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
