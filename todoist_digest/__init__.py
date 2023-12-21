@@ -223,6 +223,10 @@ def get_completed_tasks(api, project_id):
 @click.option("--email-auth", required=False, help="Authorization URL for SMTP emailer")
 @click.option("--email-to", required=False, help="Email to send digest to")
 def cli(last_synced, target_user, target_project, email_auth, email_to):
+    main(last_synced, target_user, target_project, email_auth, email_to)
+
+
+def main(last_synced, target_user, target_project, email_auth, email_to):
     api = get_api()
     target_project_name = target_project
 

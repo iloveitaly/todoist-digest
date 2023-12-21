@@ -2,6 +2,8 @@ import os
 import time
 from datetime import datetime, timedelta
 
+from todoist_digest import main
+
 
 def get_past_date():
     return (datetime.utcnow() - timedelta(weeks=2)).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -19,11 +21,6 @@ def is_weekday():
     return datetime.utcnow().isoweekday() < 6
 
 
-def main(last_synced, target_user, target_project, email_auth, email_to):
-    # Replace with the actual logic of todoist-digest
-    pass
-
-
 if __name__ == "__main__":
     schedule = os.environ.get("SCHEDULE", "6")
     last_synced = get_past_date()
@@ -32,6 +29,8 @@ if __name__ == "__main__":
         now = int(time.time())
         next_run = get_next_run_timestamp(schedule)
         sleep_seconds = next_run - now
+
+        print(f"Sleeping for {sleep_seconds} seconds")
 
         time.sleep(max(sleep_seconds, 0))
 
