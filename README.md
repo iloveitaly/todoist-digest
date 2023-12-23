@@ -77,6 +77,14 @@ In order to pass the py + poetry versions properly to nixpacks:
 nixpacks build . --name todoist-digest --env NIXPACKS_PYTHON_VERSION --env NIXPACKS_POETRY_VERSION --start-cmd bin/cron-digest
 ```
 
+### Playground
+
+ipython shell with some helpful variables defined:
+
+```shell
+./playground.py
+```
+
 ### Run with ipdb
 
 Open up an exception when there's an exception:

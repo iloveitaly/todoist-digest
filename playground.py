@@ -20,3 +20,4 @@ target_project_id = project_id = 2321686459
 target_project_name = os.getenv("TARGET_PROJECT")
 last_synced_date = parser.parse("2023-12-08T16:36:30Z")
 target_user = os.getenv("TARGET_USER")
+filter_user_id = "6305953"

@@ -120,6 +120,21 @@ def strip_markdown_links(task_content):
     return re.sub(pattern, "\\1", task_content)
 
 
+def generate_markdown_for_new_tasks(new_tasks):
+    if not new_tasks:
+        return "*No new tasks*"
+
+    markdown = []
+    for task in new_tasks:
+        task_content = strip_markdown_links(task["content"])
+
+        markdown.append(
+            f"## [{task_content}](https://todoist.com/showTask?id={task['id']})"
+        )
+
+    return "\n\n".join(markdown)
+
+
 def generate_markdown_for_comments(task_map, comments_by_task_id):
     if not comments_by_task_id:
         return "*No comments*"
@@ -216,16 +231,6 @@ def get_completed_tasks(api, project_id):
     return results | fp.flatten() | fp.lmap(that.items) | fp.flatten() | fp.to_list()
 
 
-@click.command()
-@click.option("--last-synced", required=True, help="The last synced date.")
-@click.option("--target-user", required=True, help="The target user.")
-@click.option("--target-project", required=True, help="The target project.")
-@click.option("--email-auth", required=False, help="Authorization URL for SMTP emailer")
-@click.option("--email-to", required=False, help="Email to send digest to")
-def cli(last_synced, target_user, target_project, email_auth, email_to):
-    main(last_synced, target_user, target_project, email_auth, email_to)
-
-
 def main(last_synced, target_user, target_project, email_auth, email_to):
     api = get_api()
     target_project_name = target_project
@@ -275,7 +280,7 @@ def main(last_synced, target_user, target_project, email_auth, email_to):
         # comments do not come with who created the comment by default, we need to hit a separate API to add this to the comment
         | fp.lmap(enrich_comment)
         # only select the comments posted by our target user
-        | fp.lfilter(lambda comment: comment["posted_by_user_id"] == filter_user_id)
+        | fp.where(posted_by_user_id=filter_user_id)
         | fp.sort(key="posted_at_date")
         # group by task
         | fp.group_by(lambda comment: comment["task_id"])
@@ -288,7 +293,19 @@ def main(last_synced, target_user, target_project, email_auth, email_to):
         )
         | fp.lmap(object_to_dict)
         | fp.lmap(f.partial(enrich_completed_tasks, api))
-        | fp.lfilter(lambda comment: comment["initiator_id"] == filter_user_id)
+        | fp.where(initiator_id=filter_user_id)
+    )
+
+    last_synced_date_for_todoist_filter = last_synced_date.strftime("%m/%d/%Y")
+    new_tasks = (
+        api.get_tasks(
+            # project_id=target_project_id,
+            filter=f"#{target_project_name} & created after: {last_synced_date_for_todoist_filter}",
+        )
+        | fp.lmap(object_to_dict)
+        | fp.where(creator_id=filter_user_id, parent_id=None)
+        # exclude any tasks which are already reported in the comments
+        | fp.filter(lambda task: task["id"] not in comments.keys())
     )
 
     markdown = f"""
@@ -296,6 +313,9 @@ _targeting user {target_user} on project {target_project_name}_
 
 # Comments on Project {target_project_name}
 {generate_markdown_for_comments(task_map, comments)}
+
+# Added Tasks on Project {target_project_name}
+{generate_markdown_for_new_tasks(new_tasks)}
 
 # Completed Tasks on Project {target_project_name}
 {generate_markdown_for_completed_tasks(completed_tasks)}
@@ -313,6 +333,16 @@ _targeting user {target_user} on project {target_project_name}_
             f"{last_synced_date_formatted}-{now_time_formatted} Todoist Digest for {target_project_name}",
             email_to,
         )
+
+
+@click.command()
+@click.option("--last-synced", required=True, help="The last synced date.")
+@click.option("--target-user", required=True, help="The target user.")
+@click.option("--target-project", required=True, help="The target project.")
+@click.option("--email-auth", required=False, help="Authorization URL for SMTP emailer")
+@click.option("--email-to", required=False, help="Email to send digest to")
+def cli(last_synced, target_user, target_project, email_auth, email_to):
+    main(last_synced, target_user, target_project, email_auth, email_to)
 
 
 if __name__ == "__main__":
