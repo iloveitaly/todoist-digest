@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "todoist-digest"
-version = "0.2.6"
+version = "0.3.0"
 description = "Generate a digest of comments that occured since the last checked in date. Useful for including in an email."
 authors = ["Michael Bianco <mike@mikebian.co>"]
 license = "MIT"

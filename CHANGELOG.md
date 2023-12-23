@@ -1,3 +1,12 @@
+# [0.3.0](https://github.com/iloveitaly/todoist-digest/compare/v0.2.6...v0.3.0) (2023-12-23)
+
+
+### Features
+
+* add new tasks section ([e7e8116](https://github.com/iloveitaly/todoist-digest/commit/e7e81161e39e3f2a46d40c945b37a8851c1340a6))
+
+
+
 ## [0.2.6](https://github.com/iloveitaly/todoist-digest/compare/v0.2.5...v0.2.6) (2023-12-21)
 
 
@@ -39,15 +48,6 @@
 ### Bug Fixes
 
 * log when email is sent ([192ca28](https://github.com/iloveitaly/todoist-digest/commit/192ca28e7bd17d9dbc21ed27d791d230e28318fc))
-
-
-
-## [0.2.2](https://github.com/iloveitaly/todoist-digest/compare/v0.2.1...v0.2.2) (2023-12-18)
-
-
-### Bug Fixes
-
-* no valid completed activity ([a86d6d0](https://github.com/iloveitaly/todoist-digest/commit/a86d6d0d785d842821e33460b553b101f90b6ab6))
 
 
 
