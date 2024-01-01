@@ -1,3 +1,12 @@
+## [0.3.1](https://github.com/iloveitaly/todoist-digest/compare/v0.3.0...v0.3.1) (2024-01-01)
+
+
+### Bug Fixes
+
+* convert generators into lists ([4e0ea64](https://github.com/iloveitaly/todoist-digest/commit/4e0ea6497eb928826db12d7aa2b7868b5cb588b5))
+
+
+
 # [0.3.0](https://github.com/iloveitaly/todoist-digest/compare/v0.2.6...v0.3.0) (2023-12-23)
 
 
@@ -39,15 +48,6 @@
 ### Bug Fixes
 
 * build image for arm ([a1b3774](https://github.com/iloveitaly/todoist-digest/commit/a1b377450cba4266559d92fdc2c898c21f5714a4))
-
-
-
-## [0.2.3](https://github.com/iloveitaly/todoist-digest/compare/v0.2.2...v0.2.3) (2023-12-18)
-
-
-### Bug Fixes
-
-* log when email is sent ([192ca28](https://github.com/iloveitaly/todoist-digest/commit/192ca28e7bd17d9dbc21ed27d791d230e28318fc))
 
 
 
