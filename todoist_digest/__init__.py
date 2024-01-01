@@ -6,6 +6,7 @@ import todoist_digest.funcy_ext  # isort: split
 patch_todoist_api()  # isort: split
 
 import datetime
+import inspect
 import logging
 import os
 import re
@@ -121,6 +122,9 @@ def strip_markdown_links(task_content):
 
 
 def generate_markdown_for_new_tasks(new_tasks):
+    if inspect.isgenerator(new_tasks):
+        new_tasks = list(new_tasks)
+
     if not new_tasks:
         return "*No new tasks*"
 
@@ -135,7 +139,7 @@ def generate_markdown_for_new_tasks(new_tasks):
     return "\n\n".join(markdown)
 
 
-def generate_markdown_for_comments(task_map, comments_by_task_id):
+def generate_markdown_for_comments(task_map, comments_by_task_id: dict) -> str:
     if not comments_by_task_id:
         return "*No comments*"
 
@@ -177,7 +181,10 @@ def generate_markdown_for_comments(task_map, comments_by_task_id):
     return "\n\n".join(markdown)
 
 
-def generate_markdown_for_completed_tasks(completed_tasks):
+def generate_markdown_for_completed_tasks(completed_tasks) -> str:
+    if inspect.isgenerator(completed_tasks):
+        completed_tasks = list(completed_tasks)
+
     if not completed_tasks:
         return "*No completed tasks*"
 
