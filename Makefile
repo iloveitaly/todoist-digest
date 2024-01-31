@@ -1,5 +1,3 @@
-SHELL := zsh
-
 .PHONY: build build-release github-release local-release clean
 
 IMAGE_NAME ?= "todoist-digest"
