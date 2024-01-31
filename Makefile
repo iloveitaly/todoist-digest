@@ -10,7 +10,7 @@ BUILD_CMD = nixpacks build . --name $(IMAGE_NAME) \
 		--env NIXPACKS_PYTHON_VERSION \
 		--env NIXPACKS_POETRY_VERSION \
 		--label org.opencontainers.image.source=https://github.com/$(GITHUB_REPOSITORY) \
-		--platform linux/arm64 \
+		--platform linux/arm64/v8 \
 		--tag latest
 
 build:
