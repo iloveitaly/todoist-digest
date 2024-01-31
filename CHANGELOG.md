@@ -1,3 +1,12 @@
+# [0.4.0](https://github.com/iloveitaly/todoist-digest/compare/v0.3.1...v0.4.0) (2024-01-31)
+
+
+### Features
+
+* force version bump for arm rebuild ([9b7be42](https://github.com/iloveitaly/todoist-digest/commit/9b7be42922fd6cb0ce6c7c0a14b003e245cd5d86))
+
+
+
 ## [0.3.1](https://github.com/iloveitaly/todoist-digest/compare/v0.3.0...v0.3.1) (2024-01-01)
 
 
@@ -39,15 +48,6 @@
 ### Reverts
 
 * Revert "fix: build image for arm" ([00dddd5](https://github.com/iloveitaly/todoist-digest/commit/00dddd5b32ec9a055c569fc81f034fb5b5f402c3))
-
-
-
-## [0.2.4](https://github.com/iloveitaly/todoist-digest/compare/v0.2.3...v0.2.4) (2023-12-18)
-
-
-### Bug Fixes
-
-* build image for arm ([a1b3774](https://github.com/iloveitaly/todoist-digest/commit/a1b377450cba4266559d92fdc2c898c21f5714a4))
 
 
 
