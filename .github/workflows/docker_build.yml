@@ -98,6 +98,11 @@ jobs:
         run: |
           curl -sSL https://nixpacks.com/install.sh | bash
 
+      - name: Nixpacks version
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
+        run: |
+          nixpacks --version
+
       - name: Build with nixpacks
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
         run: |
