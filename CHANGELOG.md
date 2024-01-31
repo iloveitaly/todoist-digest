@@ -1,3 +1,12 @@
+## [0.4.1](https://github.com/iloveitaly/todoist-digest/compare/v0.4.0...v0.4.1) (2024-01-31)
+
+
+### Bug Fixes
+
+* use bash so gh actions doesn't complain ([d6bed8a](https://github.com/iloveitaly/todoist-digest/commit/d6bed8a94821f786a0ff321552b7c5da0404e128))
+
+
+
 # [0.4.0](https://github.com/iloveitaly/todoist-digest/compare/v0.3.1...v0.4.0) (2024-01-31)
 
 
@@ -33,21 +42,6 @@
 * add apscheduler for cron process ([0f5f12c](https://github.com/iloveitaly/todoist-digest/commit/0f5f12c27001d1d94d74d409ee540220601d5807))
 * support cron syntax ([737df95](https://github.com/iloveitaly/todoist-digest/commit/737df95cb802586341d81e8dc192d0c2a0f49a8f))
 * use cron scheduler ([69c9b20](https://github.com/iloveitaly/todoist-digest/commit/69c9b2064deb03459a03e246fdce6cde04dd7559))
-
-
-
-## [0.2.5](https://github.com/iloveitaly/todoist-digest/compare/v0.2.4...v0.2.5) (2023-12-21)
-
-
-### Bug Fixes
-
-* main reference ([9c56a32](https://github.com/iloveitaly/todoist-digest/commit/9c56a3290913776c50a19d7b749677ce2c93c4fb))
-* try main.py to see if poetry works properly ([0c1af8d](https://github.com/iloveitaly/todoist-digest/commit/0c1af8dc5fc9352ea95bd8daa33cf43e3dbaf532))
-
-
-### Reverts
-
-* Revert "fix: build image for arm" ([00dddd5](https://github.com/iloveitaly/todoist-digest/commit/00dddd5b32ec9a055c569fc81f034fb5b5f402c3))
 
 
 
