@@ -1,3 +1,13 @@
+## [0.4.2](https://github.com/iloveitaly/todoist-digest/compare/v0.4.1...v0.4.2) (2024-01-31)
+
+
+### Bug Fixes
+
+* output nixpacks version ([0c4a9c7](https://github.com/iloveitaly/todoist-digest/commit/0c4a9c7701da6ea6ec43378f296c88a2c82181af))
+* push command for easy local building ([18c07b1](https://github.com/iloveitaly/todoist-digest/commit/18c07b13ab7fa5e92cb593560239c30d24bbe382))
+
+
+
 ## [0.4.1](https://github.com/iloveitaly/todoist-digest/compare/v0.4.0...v0.4.1) (2024-01-31)
 
 
@@ -31,17 +41,6 @@
 ### Features
 
 * add new tasks section ([e7e8116](https://github.com/iloveitaly/todoist-digest/commit/e7e81161e39e3f2a46d40c945b37a8851c1340a6))
-
-
-
-## [0.2.6](https://github.com/iloveitaly/todoist-digest/compare/v0.2.5...v0.2.6) (2023-12-21)
-
-
-### Bug Fixes
-
-* add apscheduler for cron process ([0f5f12c](https://github.com/iloveitaly/todoist-digest/commit/0f5f12c27001d1d94d74d409ee540220601d5807))
-* support cron syntax ([737df95](https://github.com/iloveitaly/todoist-digest/commit/737df95cb802586341d81e8dc192d0c2a0f49a8f))
-* use cron scheduler ([69c9b20](https://github.com/iloveitaly/todoist-digest/commit/69c9b2064deb03459a03e246fdce6cde04dd7559))
 
 
 
