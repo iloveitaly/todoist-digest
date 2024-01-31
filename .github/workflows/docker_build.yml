@@ -101,12 +101,9 @@ jobs:
       - name: Build with nixpacks
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
         run: |
-          # label is important here in order for the package to show up on the github repo
-          nixpacks build . --name ${{ env.image_name }} \
-            --env NIXPACKS_PYTHON_VERSION="${{ steps.versions.outputs.python }}" \
-            --env NIXPACKS_POETRY_VERSION="${{ steps.versions.outputs.poetry }}" \
-            --label org.opencontainers.image.source=https://github.com/${{ github.repository }} \
-            --tag latest
+          export NIXPACKS_PYTHON_VERSION="${{ steps.versions.outputs.python }}"
+          export NIXPACKS_POETRY_VERSION="${{ steps.versions.outputs.poetry }}"
+          make build IMAGE_NAME=${{ env.image_name }} GITHUB_REPOSITORY=${{ github.repository }}
 
       - name: Docker push
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
