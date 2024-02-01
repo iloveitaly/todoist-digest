@@ -25,4 +25,6 @@ def send_markdown_email(auth_url, markdown_content, subject, to_address):
         logger.info("Sending email to %s", to_address)
 
         server.login(parsed_url.username, parsed_url.password)
-        server.send_message(msg)
+        result = server.send_message(msg)
+        server.quit()
+        breakpoint()

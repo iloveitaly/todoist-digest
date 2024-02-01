@@ -206,7 +206,7 @@ def get_api():
 
 
 # https://developer.todoist.com/sync/v9/#get-archived-sections
-def get_completed_tasks(api, project_id):
+def get_completed_tasks(api: TodoistAPI, project_id):
     """
     you have to iterate over all sections in a project to get all completed tasks
 
@@ -221,21 +221,36 @@ def get_completed_tasks(api, project_id):
     ]
     """
 
+    # combine all projects and subsections into a single list with params that correspond to the API params required
     projects_and_sections = [
         {"section_id": section_id}
         for section_id in section_map(api)[int(project_id)] | fp.lmap(that.id)
     ] + [{"project_id": project_id}]
 
-    # TODO could be neat if there was some sort of kwargs curry here
-    results = projects_and_sections | fp.lmap(
-        lambda args: api.get_completed_items(**(args | {"limit": 100}))
+    def get_all_completed_items(original_params: dict):
+        params = original_params.copy()
+        results = []
+
+        while True:
+            # 100 is the limit for this particular completed items endpoint, the REST API allows for max of 200 :/
+            # https://github.com/Suor/funcy/issues/148
+            response = api.get_completed_items(**(params | {"limit": 100}))
+            results.append(response.items)
+
+            if not response.has_more:
+                break
+
+            params["cursor"] = response.next_cursor
+
+        return f.flatten(results)
+
+    # TODO could be neat if there was some sort of kwargs partial here
+    return (
+        projects_and_sections
+        | fp.lmap(get_all_completed_items)
+        | fp.flatten()
+        | fp.to_list()
     )
-
-    # TODO we will need to handle this as some point, could use last_seen_id instead
-    # TODO this seems messy, got to be an easier way to check for a null set here
-    assert results | fp.where_attr(has_more=True) | fp.to_list() == []
-
-    return results | fp.flatten() | fp.lmap(that.items) | fp.flatten() | fp.to_list()
 
 
 def main(last_synced, target_user, target_project, email_auth, email_to):
