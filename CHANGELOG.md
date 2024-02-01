@@ -1,3 +1,12 @@
+## [0.4.3](https://github.com/iloveitaly/todoist-digest/compare/v0.4.2...v0.4.3) (2024-02-01)
+
+
+### Bug Fixes
+
+* projects with more than 100 tasks ([f9da80f](https://github.com/iloveitaly/todoist-digest/commit/f9da80ff4deeccbe8ea48322ac325d7f255e7699))
+
+
+
 ## [0.4.2](https://github.com/iloveitaly/todoist-digest/compare/v0.4.1...v0.4.2) (2024-01-31)
 
 
@@ -32,15 +41,6 @@
 ### Bug Fixes
 
 * convert generators into lists ([4e0ea64](https://github.com/iloveitaly/todoist-digest/commit/4e0ea6497eb928826db12d7aa2b7868b5cb588b5))
-
-
-
-# [0.3.0](https://github.com/iloveitaly/todoist-digest/compare/v0.2.6...v0.3.0) (2023-12-23)
-
-
-### Features
-
-* add new tasks section ([e7e8116](https://github.com/iloveitaly/todoist-digest/commit/e7e81161e39e3f2a46d40c945b37a8851c1340a6))
 
 
 
