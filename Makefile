@@ -17,8 +17,6 @@ build:
 build-debug:
 	$(BUILD_CMD) --out .
 
-docker-push: build
-	if [ -z "$(GITHUB_REPOSITORY)" ]; then echo "GITHUB_REPOSITORY is not set" && exit 1; fi
-	if [[ $(IMAGE_NAME) != *"ghcr"* ]]; then echo "IMAGE_NAME does not contain 'ghcr'" && exit 1; fi
-
-	docker push $(IMAGE_NAME):latest
+docker-push:
+	$(MAKE) build GITHUB_REPOSITORY=iloveitaly/todoist-digest IMAGE_NAME=ghcr.io/iloveitaly/todoist-digest
+	docker push ghcr.io/iloveitaly/todoist-digest:latest
