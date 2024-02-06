@@ -5,5 +5,9 @@
 output
 .envrc
 .env
+.git
+.DS_Store
+.env-*
+.trunk
 
 last_sync
