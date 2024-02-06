@@ -16,8 +16,9 @@ def patch_todoist_api():
             original_function,
         )
 
+        # TODO pretty sure authorization errors are retried :/
         patched_function = backoff.on_exception(
-            backoff.expo, requests.exceptions.HTTPError
+            backoff.expo, requests.exceptions.HTTPError, max_tries=5
         )(original_function)
 
         setattr(
