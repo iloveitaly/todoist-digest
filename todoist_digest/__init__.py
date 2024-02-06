@@ -260,6 +260,8 @@ def main(last_synced, target_user, target_project, email_auth, email_to):
     """
     Project(color='blue', comment_count=0, id='project_id', is_favorite=False, is_inbox_project=False, is_shared=True, is_team_inbox=False, name='Project_Name', order=14, parent_id=None, url='https://todoist.com/showProject?id=project_id', view_style='list')]
     """
+    logger.info("getting projects")
+
     projects = api.get_projects()
     target_project = projects | fp.where_attr(name=target_project_name) | fp.first()
     target_project_id = target_project.id
@@ -267,8 +269,8 @@ def main(last_synced, target_user, target_project, email_auth, email_to):
     """
     Task(assignee_id=None, assigner_id=None, comment_count=1, is_completed=False, content='look into car tax credit [Program | Energy Office](https://energyoffice.colorado.gov/program)', created_at='2023-10-05T17:13:23.912168Z', creator_id='creator_id', description='how long do i need to own the car? Can i stack the credits?', due=None, id='task_id', labels=[], order=-3, parent_id=None, priority=1, project_id='project_id', section_id='section_id', url='https://todoist.com/showTask?id=task_id', sync_id=None)
     """
+    logger.info("getting tasks")
     tasks = api.get_tasks(project_id=target_project_id)
-
     task_map = (
         tasks
         | fp.group_by(lambda task: task.id)
@@ -290,6 +292,7 @@ def main(last_synced, target_user, target_project, email_auth, email_to):
     Comment(attachment=None, content='- Lorem ipsum dolor sit amet?\n- Consectetur adipiscing elit?', id='comment_id', posted_at='2023-10-16T16:02:55.059574Z', project_id=None, task_id='task_id')
     """
 
+    logger.info("getting comments")
     comments = (
         tasks
         # get all comments for each relevant task
@@ -308,6 +311,7 @@ def main(last_synced, target_user, target_project, email_auth, email_to):
         | fp.group_by(lambda comment: comment["task_id"])
     )
 
+    logger.info("getting completed tasks")
     completed_tasks = (
         get_completed_tasks(api, target_project_id)
         | fp.lfilter(
