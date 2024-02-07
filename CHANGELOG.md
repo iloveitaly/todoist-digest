@@ -1,3 +1,12 @@
+# [0.5.0](https://github.com/iloveitaly/todoist-digest/compare/v0.4.5...v0.5.0) (2024-02-07)
+
+
+### Features
+
+* fake feat bump to force ci to run completely ([04b605c](https://github.com/iloveitaly/todoist-digest/commit/04b605c0780da72dfb935ee2643643cffc42a195))
+
+
+
 ## [0.4.5](https://github.com/iloveitaly/todoist-digest/compare/v0.4.4...v0.4.5) (2024-02-07)
 
 
@@ -33,15 +42,6 @@
 
 * output nixpacks version ([0c4a9c7](https://github.com/iloveitaly/todoist-digest/commit/0c4a9c7701da6ea6ec43378f296c88a2c82181af))
 * push command for easy local building ([18c07b1](https://github.com/iloveitaly/todoist-digest/commit/18c07b13ab7fa5e92cb593560239c30d24bbe382))
-
-
-
-## [0.4.1](https://github.com/iloveitaly/todoist-digest/compare/v0.4.0...v0.4.1) (2024-01-31)
-
-
-### Bug Fixes
-
-* use bash so gh actions doesn't complain ([d6bed8a](https://github.com/iloveitaly/todoist-digest/commit/d6bed8a94821f786a0ff321552b7c5da0404e128))
 
 
 
