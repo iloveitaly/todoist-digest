@@ -1,7 +1,8 @@
 .PHONY: build build-release github-release local-release clean
 
-IMAGE_NAME ?= "todoist-digest"
-GITHUB_REPOSITORY ?= ""
+GITHUB_REPOSITORY ?= $(shell gh repo view --json nameWithOwner --jq '.nameWithOwner' | tr -d '[:space:]')
+IMAGE_NAME ?= ghcr.io/$(GITHUB_REPOSITORY)
+IMAGE_TAG ?= latest
 
 # label is important here in order for the package to show up on the github repo
 BUILD_CMD = nixpacks build . --name $(IMAGE_NAME) \
@@ -14,9 +15,11 @@ BUILD_CMD = nixpacks build . --name $(IMAGE_NAME) \
 build:
 	$(BUILD_CMD)
 
+build-shell: build
+	docker run -it $(IMAGE_NAME):$(IMAGE_TAG) bash -c 'source /opt/venv/bin/activate'
+
 build-debug:
 	$(BUILD_CMD) --out .
 
-docker-push:
-	$(MAKE) build GITHUB_REPOSITORY=iloveitaly/todoist-digest IMAGE_NAME=ghcr.io/iloveitaly/todoist-digest
-	docker push ghcr.io/iloveitaly/todoist-digest:latest
+docker-push: build
+	docker push $(IMAGE_NAME):$(IMAGE_TAG)
