@@ -1,3 +1,13 @@
+## [0.4.5](https://github.com/iloveitaly/todoist-digest/compare/v0.4.4...v0.4.5) (2024-02-07)
+
+
+### Bug Fixes
+
+* don't know why, but GH actions won't build on the arm platform ([768616a](https://github.com/iloveitaly/todoist-digest/commit/768616abb845bc8d5036891a8e789fca59b196d1))
+* limit max backoff retries ([b41d391](https://github.com/iloveitaly/todoist-digest/commit/b41d391cbd995d3bd663afb26bff6f50609c5aaf))
+
+
+
 ## [0.4.4](https://github.com/iloveitaly/todoist-digest/compare/v0.4.3...v0.4.4) (2024-02-01)
 
 
@@ -32,15 +42,6 @@
 ### Bug Fixes
 
 * use bash so gh actions doesn't complain ([d6bed8a](https://github.com/iloveitaly/todoist-digest/commit/d6bed8a94821f786a0ff321552b7c5da0404e128))
-
-
-
-# [0.4.0](https://github.com/iloveitaly/todoist-digest/compare/v0.3.1...v0.4.0) (2024-01-31)
-
-
-### Features
-
-* force version bump for arm rebuild ([9b7be42](https://github.com/iloveitaly/todoist-digest/commit/9b7be42922fd6cb0ce6c7c0a14b003e245cd5d86))
 
 
 
