@@ -10,6 +10,7 @@ import inspect
 import logging
 import os
 import re
+import sys
 from functools import lru_cache
 
 import click
@@ -28,6 +29,10 @@ from todoist_digest.todoist import (
 )
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+# redirect to stderr
+handler = logging.StreamHandler(sys.stderr)
+logger.addHandler(handler)
 
 # conditionally import pretty traceback
 try:

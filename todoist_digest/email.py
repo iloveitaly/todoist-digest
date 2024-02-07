@@ -18,13 +18,24 @@ def send_markdown_email(auth_url, markdown_content, subject, to_address):
     msg["To"] = to_address
     msg["Subject"] = subject
 
+    logger.info(
+        "creating email for %s, from %s, content length %i",
+        to_address,
+        parsed_url.username,
+        len(markdown_content),
+    )
+
+    # TODO maybe need to add a plain text version for spam protection?
+    # msg.attach(MIMEText(markdown_content, "plain"))
+
     # TODO any sane styling we can setup?
     msg.attach(MIMEText(html_content, "html"))
 
     with smtplib.SMTP_SSL(parsed_url.hostname, parsed_url.port) as server:
         logger.info("Sending email to %s", to_address)
 
-        server.login(parsed_url.username, parsed_url.password)
+        login_result = server.login(parsed_url.username, parsed_url.password)
+        logger.info("Login result: %s", login_result)
         result = server.send_message(msg)
+        logger.info("Send result: %s", result)
         server.quit()
-        breakpoint()
