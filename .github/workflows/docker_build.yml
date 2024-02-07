@@ -103,14 +103,12 @@ jobs:
         run: |
           nixpacks --version
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Build with nixpacks
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
         run: |
           export NIXPACKS_PYTHON_VERSION="${{ steps.versions.outputs.python }}"
           export NIXPACKS_POETRY_VERSION="${{ steps.versions.outputs.poetry }}"
-          make build IMAGE_NAME=${{ env.image_name }} GITHUB_REPOSITORY=${{ github.repository }}
-
-      - name: Docker push
-        if: ${{ steps.changelog.outputs.skipped == 'false' }}
-        run: |
-          docker push ${{ env.image_name }}:latest
+          make docker-push IMAGE_NAME=${{ env.image_name }} GITHUB_REPOSITORY=${{ github.repository }}
