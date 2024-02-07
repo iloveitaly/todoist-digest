@@ -14,9 +14,6 @@ jobs:
   build_and_push_to_registry:
     name: Docker Build and Push
     runs-on: ubuntu-latest
-    env:
-      image_name: ghcr.io/${{ github.repository }}
-      image_tag: latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -111,4 +108,4 @@ jobs:
         run: |
           export NIXPACKS_PYTHON_VERSION="${{ steps.versions.outputs.python }}"
           export NIXPACKS_POETRY_VERSION="${{ steps.versions.outputs.poetry }}"
-          make docker-push IMAGE_NAME=${{ env.image_name }} GITHUB_REPOSITORY=${{ github.repository }}
+          make docker-push GITHUB_REPOSITORY=${{ github.repository }}
