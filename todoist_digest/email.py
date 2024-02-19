@@ -25,10 +25,10 @@ def send_markdown_email(auth_url, markdown_content, subject, to_address):
         len(markdown_content),
     )
 
-    # TODO maybe need to add a plain text version for spam protection?
+    # this caused the html version to be ignored...
     # msg.attach(MIMEText(markdown_content, "plain"))
 
-    # TODO any sane styling we can setup?
+    # TODO any sane HTML styling we can setup?
     msg.attach(MIMEText(html_content, "html"))
 
     with smtplib.SMTP_SSL(parsed_url.hostname, parsed_url.port) as server:

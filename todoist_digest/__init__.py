@@ -18,7 +18,7 @@ import funcy as f
 import funcy_pipe as fp
 from dateutil import parser
 from todoist_api_python.api import TodoistAPI
-from todoist_api_python.models import Collaborator, Section
+from todoist_api_python.models import Section
 from whatever import that
 
 from todoist_digest.email import send_markdown_email
@@ -265,11 +265,19 @@ def main(last_synced, target_user, target_project, email_auth, email_to):
     """
     Project(color='blue', comment_count=0, id='project_id', is_favorite=False, is_inbox_project=False, is_shared=True, is_team_inbox=False, name='Project_Name', order=14, parent_id=None, url='https://todoist.com/showProject?id=project_id', view_style='list')]
     """
-    logger.info("getting projects")
+     logger.info("getting projects")
 
-    projects = api.get_projects()
-    target_project = projects | fp.where_attr(name=target_project_name) | fp.first()
-    target_project_id = target_project.id
+    if target_project.isdigit():
+        target_project_id = target_project
+
+        # in this case, the target_project_name is NOT the actual name!
+        projects = api.get_projects()
+        target_project = projects | fp.where_attr(id=target_project_id) | fp.first()
+        target_project_name = target_project.name
+    else:
+        projects = api.get_projects()
+        target_project = projects | fp.where_attr(name=target_project_name) | fp.first()
+        target_project_id = target_project.id
 
     """
     Task(assignee_id=None, assigner_id=None, comment_count=1, is_completed=False, content='look into car tax credit [Program | Energy Office](https://energyoffice.colorado.gov/program)', created_at='2023-10-05T17:13:23.912168Z', creator_id='creator_id', description='how long do i need to own the car? Can i stack the credits?', due=None, id='task_id', labels=[], order=-3, parent_id=None, priority=1, project_id='project_id', section_id='section_id', url='https://todoist.com/showTask?id=task_id', sync_id=None)
