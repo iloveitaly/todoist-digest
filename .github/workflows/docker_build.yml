@@ -10,6 +10,12 @@ on:
 permissions:
   contents: write
 
+env:
+  PIP_DEFAULT_TIMEOUT: 60
+  PIP_RETRIES: 5
+  # required for `gh` cli to work
+  GH_TOKEN: ${{ secrets.github_token }}
+
 jobs:
   build_and_push_to_registry:
     name: Docker Build and Push
@@ -101,6 +107,7 @@ jobs:
           nixpacks --version
 
       - name: Set up QEMU
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
         uses: docker/setup-qemu-action@v3
 
       - name: Build with nixpacks
