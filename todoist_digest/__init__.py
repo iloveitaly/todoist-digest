@@ -265,7 +265,7 @@ def main(last_synced, target_user, target_project, email_auth, email_to):
     """
     Project(color='blue', comment_count=0, id='project_id', is_favorite=False, is_inbox_project=False, is_shared=True, is_team_inbox=False, name='Project_Name', order=14, parent_id=None, url='https://todoist.com/showProject?id=project_id', view_style='list')]
     """
-     logger.info("getting projects")
+    logger.info("getting projects")
 
     if target_project.isdigit():
         target_project_id = target_project
