@@ -1,0 +1,15 @@
+services:
+  todoist-digest-genny:
+    image: ghcr.io/iloveitaly/todoist-digest:latest
+    restart: always
+    env_file:
+      - env-mailer
+      - env-todoist
+    environment:
+      - TARGET_USER=user-who-is-commenting@gmail.com
+      - TARGET_PROJECT=Assistant
+      - EMAIL_TO=user-to-receive-digest@gmail.com
+      - SCHEDULE=0 7 * * *
+      # the container will *not* assume the TZ of the host without this
+      # make sure your host has this set
+      - TZ=${TZ}

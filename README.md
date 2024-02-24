@@ -27,6 +27,8 @@ Want to inspect the docker container?
 docker run -it ghcr.io/iloveitaly/todoist-digest:latest bash
 ```
 
+Or, just use the [docker compose file](docker-compose.yml).
+
 ### Locally
 
 
@@ -92,3 +94,7 @@ Open up an exception when there's an exception:
 ```shell
 ipdb3 $(which todoist-digest) --last-synced 2023-12-14T13:38:25Z ...
 ```
+
+## Related
+
+* https://www.smashlists.com ([discovered here](https://www.reddit.com/r/todoist/comments/l7mhfq/how_to_track_weekly_goals/))
