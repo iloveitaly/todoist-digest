@@ -1,3 +1,17 @@
+# [0.6.0](https://github.com/iloveitaly/todoist-digest/compare/v0.5.1...v0.6.0) (2024-03-12)
+
+
+### Bug Fixes
+
+* remove weekend skip ([a3f43f8](https://github.com/iloveitaly/todoist-digest/commit/a3f43f8277c33ddea72365b35ee404d18fd83f3d))
+
+
+### Features
+
+* include comments on completed tasks ([329bfc5](https://github.com/iloveitaly/todoist-digest/commit/329bfc5c8c830b19cc058a80c3d96dbd2da5f654))
+
+
+
 ## [0.5.1](https://github.com/iloveitaly/todoist-digest/compare/v0.5.0...v0.5.1) (2024-02-19)
 
 
@@ -33,15 +47,6 @@
 ### Bug Fixes
 
 * makefile tab fix ([2211458](https://github.com/iloveitaly/todoist-digest/commit/2211458c056321c5ca8e7ab46f85e1d9f678c105))
-
-
-
-## [0.4.3](https://github.com/iloveitaly/todoist-digest/compare/v0.4.2...v0.4.3) (2024-02-01)
-
-
-### Bug Fixes
-
-* projects with more than 100 tasks ([f9da80f](https://github.com/iloveitaly/todoist-digest/commit/f9da80ff4deeccbe8ea48322ac325d7f255e7699))
 
 
 
