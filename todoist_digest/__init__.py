@@ -1,7 +1,6 @@
 import logging
 
 from todoist_digest.patch import patch_todoist_api  # isort: split
-import todoist_digest.funcy_ext  # isort: split
 
 patch_todoist_api()  # isort: split
 
@@ -27,6 +26,9 @@ from todoist_digest.todoist import (
     todoist_get_item_info,
     todoist_get_sync_resource,
 )
+
+# extend funcy with all of the helpful additions I like :)
+fp.patch()
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

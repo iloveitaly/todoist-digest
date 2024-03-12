@@ -1,3 +1,7 @@
+"""
+Todoist API extensions, mostly around the sync API, that won't be added to the core API (I tried)
+"""
+
 from functools import lru_cache
 
 
