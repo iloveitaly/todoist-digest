@@ -1,8 +1,8 @@
-dockerfile https://github.com/orgs/python-poetry/discussions/1879#discussioncomment-7284113
-
+- [ ] dockerfile https://github.com/orgs/python-poetry/discussions/1879#discussioncomment-7284113
 - [ ] hook into <https://github.com/iloveitaly/iloveitaly/blob/main/.github/workflows/follower-notifier.yml>
 - [ ] multi arch --platform on
 - [ ] --platform linux/arm64
 - [ ] can reactions get pushed through the digest?
 - [ ] https://github.com/railwayapp/nixpacks/issues/1015 can't build multi arch
 - [ ] try trunk for makefile linting
+- [ ] allow multiple projects to be targeted

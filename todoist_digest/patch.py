@@ -1,6 +1,11 @@
+import logging
+
 import backoff
 import requests
 import todoist_api_python.http_requests
+
+# backoff does not log by default
+logging.getLogger("backoff").addHandler(logging.StreamHandler())
 
 
 # https://github.com/Doist/todoist-api-python/issues/38
