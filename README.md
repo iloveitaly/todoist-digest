@@ -6,6 +6,12 @@ This is a simple project which generates a digest of all comments by a particula
 
 This project was also a good excuse to play around and test some functional programming/data manipulation tooling I've been messing with ([funcy](https://github.com/Suor/funcy), [funcy-pipe](https://github.com/iloveitaly/funcy-pipe), and [whatever](https://github.com/Suor/whatever)).
 
+## Features
+
+* Can send an email digest if auth is provided
+* Retrieves comments on completed tasks
+* Target projects by ID or name
+
 ## Usage
 
 ### Docker
