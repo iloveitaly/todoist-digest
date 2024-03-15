@@ -1,4 +1,5 @@
 import logging
+import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -14,7 +15,7 @@ def send_markdown_email(auth_url, markdown_content, subject, to_address):
     html_content = markdown2.markdown(markdown_content)
 
     msg = MIMEMultipart()
-    msg["From"] = parsed_url.username
+    msg["From"] = os.environ.get("EMAIL_FROM", parsed_url.username)
     msg["To"] = to_address
     msg["Subject"] = subject
 
