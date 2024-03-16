@@ -394,7 +394,11 @@ _targeting user {target_user} on project {target_project_name}_
 @click.option("--target-user", required=True, help="The target user.")
 @click.option("--target-project", required=True, help="The target project.")
 @click.option("--email-auth", required=False, help="Authorization URL for SMTP emailer")
-@click.option("--email-to", required=False, help="Email to send digest to")
+@click.option(
+    "--email-to",
+    required=False,
+    help="Email(s) to send digest to. Separate multiple emails with a comma.",
+)
 def cli(last_synced, target_user, target_project, email_auth, email_to):
     main(last_synced, target_user, target_project, email_auth, email_to)
 

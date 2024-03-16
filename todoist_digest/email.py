@@ -10,18 +10,18 @@ import markdown2
 logger = logging.getLogger(__name__)
 
 
-def send_markdown_email(auth_url, markdown_content, subject, to_address):
+def send_markdown_email(auth_url, markdown_content, subject, to_addresses):
     parsed_url = urlparse(auth_url)
     html_content = markdown2.markdown(markdown_content)
 
     msg = MIMEMultipart()
     msg["From"] = os.environ.get("EMAIL_FROM", parsed_url.username)
-    msg["To"] = to_address
+    msg["To"] = to_addresses
     msg["Subject"] = subject
 
     logger.info(
         "creating email for %s, from %s, content length %i",
-        to_address,
+        to_addresses,
         parsed_url.username,
         len(markdown_content),
     )
@@ -33,7 +33,7 @@ def send_markdown_email(auth_url, markdown_content, subject, to_address):
     msg.attach(MIMEText(html_content, "html"))
 
     with smtplib.SMTP_SSL(parsed_url.hostname, parsed_url.port) as server:
-        logger.info("Sending email to %s", to_address)
+        logger.info("Sending email to %s", to_addresses)
 
         login_result = server.login(parsed_url.username, parsed_url.password)
         logger.info("Login result: %s", login_result)
