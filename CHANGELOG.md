@@ -1,3 +1,12 @@
+# [0.7.0](https://github.com/iloveitaly/todoist-digest/compare/v0.6.1...v0.7.0) (2024-03-16)
+
+
+### Features
+
+* support multiple to emails ([e3913eb](https://github.com/iloveitaly/todoist-digest/commit/e3913eb1481bf1b0235af30837dc59acabab894e))
+
+
+
 ## [0.6.1](https://github.com/iloveitaly/todoist-digest/compare/v0.6.0...v0.6.1) (2024-03-15)
 
 
@@ -37,16 +46,6 @@
 ### Features
 
 * fake feat bump to force ci to run completely ([04b605c](https://github.com/iloveitaly/todoist-digest/commit/04b605c0780da72dfb935ee2643643cffc42a195))
-
-
-
-## [0.4.5](https://github.com/iloveitaly/todoist-digest/compare/v0.4.4...v0.4.5) (2024-02-07)
-
-
-### Bug Fixes
-
-* don't know why, but GH actions won't build on the arm platform ([768616a](https://github.com/iloveitaly/todoist-digest/commit/768616abb845bc8d5036891a8e789fca59b196d1))
-* limit max backoff retries ([b41d391](https://github.com/iloveitaly/todoist-digest/commit/b41d391cbd995d3bd663afb26bff6f50609c5aaf))
 
 
 
