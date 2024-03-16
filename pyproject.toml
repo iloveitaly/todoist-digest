@@ -22,9 +22,9 @@ apscheduler = "^3.10.4"
 
 [tool.poetry.group.dev.dependencies]
 isort = "5.11.5"
-black = "^24.2.0"
+black = "^24.3.0"
 pylint = "^3.1.0"
-pyright = "^1.1.353"
+pyright = "^1.1.354"
 
 [tool.isort]
 profile = "black"
