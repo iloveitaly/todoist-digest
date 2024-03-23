@@ -134,8 +134,12 @@ def strip_markdown_links(task_content):
     return re.sub(pattern, "\\1", task_content)
 
 
-def task_link(task_id):
+def todoist_task_link(task_id):
     return f"https://todoist.com/showTask?id={task_id}"
+
+
+def todoist_project_link(project_id):
+    return f"https://todoist.com/showProject?id={project_id}"
 
 
 def generate_markdown_for_new_tasks(new_tasks: list) -> str:
@@ -146,7 +150,7 @@ def generate_markdown_for_new_tasks(new_tasks: list) -> str:
     for task in new_tasks:
         task_content = strip_markdown_links(task["content"])
 
-        markdown.append(f"## [{task_content}]({task_link(task['id'])})")
+        markdown.append(f"## [{task_content}]({todoist_task_link(task['id'])})")
 
     return "\n\n".join(markdown)
 
@@ -161,7 +165,7 @@ def generate_markdown_for_comments(task_map, comments_by_task_id: dict) -> str:
 
         task_content = strip_markdown_links(task.content)
 
-        markdown.append(f"## [{task_content}]({task_link(task_id)})")
+        markdown.append(f"## [{task_content}]({todoist_task_link(task_id)})")
 
         def add_content_to_attachments(comment):
             if comment["content"] != "":
@@ -199,7 +203,7 @@ def generate_markdown_for_completed_tasks(completed_tasks: list) -> str:
     for task in completed_tasks:
         task_content = strip_markdown_links(task["content"])
 
-        markdown.append(f"## [{task_content}]({task_link(task['id'])})")
+        markdown.append(f"## [{task_content}]({todoist_task_link(task['id'])})")
 
     return "\n\n".join(markdown)
 
@@ -257,24 +261,23 @@ def get_completed_tasks(api: TodoistAPI, project_id):
     )
 
 
-def main(last_synced, target_user, target_project, email_auth, email_to):
-    api = get_api()
-    target_project_name = target_project
-
+def project_digest(api, last_synced, target_user, target_project_name_or_id):
     """
     Project(color='blue', comment_count=0, id='project_id', is_favorite=False, is_inbox_project=False, is_shared=True, is_team_inbox=False, name='Project_Name', order=14, parent_id=None, url='https://todoist.com/showProject?id=project_id', view_style='list')]
     """
     logger.info("getting projects")
 
-    if target_project.isdigit():
-        target_project_id = target_project
+    projects = api.get_projects()
+
+    # if digit, then a ID and not a name was passed
+    if target_project_name_or_id.isdigit():
+        target_project_id = target_project_name_or_id
 
         # in this case, the target_project_name is NOT the actual name!
-        projects = api.get_projects()
         target_project = projects | fp.where_attr(id=target_project_id) | fp.first()
         target_project_name = target_project.name
     else:
-        projects = api.get_projects()
+        target_project_name = target_project_name_or_id
         target_project = projects | fp.where_attr(name=target_project_name) | fp.first()
 
         if not target_project:
@@ -303,8 +306,6 @@ def main(last_synced, target_user, target_project, email_auth, email_to):
         | fp.walk_values(fp.exactly_one)
     )
 
-    last_synced_date = parser.parse(last_synced)
-
     filter_user_id = (
         collaborator_map(api).values()
         | fp.where(email=target_user)
@@ -328,7 +329,7 @@ def main(last_synced, target_user, target_project, email_auth, email_to):
         | fp.lmap(object_to_dict)
         | fp.lmap(fp.partial(enrich_date, key="posted_at"))
         # no date filter is applied by default, we don't want all comments
-        | fp.lfilter(lambda comment: comment["posted_at_date"] > last_synced_date)
+        | fp.lfilter(lambda comment: comment["posted_at_date"] > last_synced)
         # comments do not come with who created the comment by default, we need to hit a separate API to add this to the comment
         | fp.lmap(enrich_comment)
         # only select the comments posted by our target user
@@ -341,7 +342,7 @@ def main(last_synced, target_user, target_project, email_auth, email_to):
     filtered_completed_tasks = (
         completed_tasks
         | fp.lfilter(
-            lambda comment: parse_todoist_date(comment.completed_at) > last_synced_date
+            lambda comment: parse_todoist_date(comment.completed_at) > last_synced
         )
         | fp.lmap(object_to_dict)
         | fp.lmap(f.partial(enrich_completed_tasks, api))
@@ -350,7 +351,7 @@ def main(last_synced, target_user, target_project, email_auth, email_to):
     )
 
     logger.info("getting new tasks")
-    last_synced_date_for_todoist_filter = last_synced_date.strftime("%m/%d/%Y")
+    last_synced_date_for_todoist_filter = last_synced.strftime("%m/%d/%Y")
     new_tasks = (
         api.get_tasks(
             filter=f"#{target_project_name} & created after: {last_synced_date_for_todoist_filter}",
@@ -362,18 +363,58 @@ def main(last_synced, target_user, target_project, email_auth, email_to):
         | fp.to_list()
     )
 
-    markdown = f"""
-_targeting user {target_user} on project {target_project_name}_
+    return {
+        "project_id": target_project_id,
+        "project_name": target_project_name,
+        "comments": generate_markdown_for_comments(task_map, comments),
+        "new_tasks": generate_markdown_for_new_tasks(new_tasks),
+        "completed_tasks": generate_markdown_for_completed_tasks(
+            filtered_completed_tasks
+        ),
+    }
 
-# Comments on Project {target_project_name}
-{generate_markdown_for_comments(task_map, comments)}
 
-# Added Tasks on Project {target_project_name}
-{generate_markdown_for_new_tasks(new_tasks)}
+def main(last_synced, target_user, target_project, email_auth, email_to):
+    api = get_api()
+    last_synced_date = parser.parse(last_synced)
 
-# Completed Tasks on Project {target_project_name}
-{generate_markdown_for_completed_tasks(filtered_completed_tasks)}
-    """
+    # allow multiple projects to be passed in via a comma separated list
+    if "," in target_project:
+        target_projects = target_project.split(",") | fp.map(str.strip)
+    else:
+        target_projects = [target_project]
+
+    markdown = ""
+
+    project_digests = (
+        target_projects
+        | fp.map(fp.partial(project_digest, api, last_synced_date, target_user))
+        | fp.to_list()
+    )
+    breakpoint()
+
+    formatted_project_header = ", ".join(
+        project_digests | fp.pluck("project_name") | fp.to_list()
+    )
+
+    for project_identifier in target_projects:
+        digest = project_digest(api, last_synced, target_user, project_identifier)
+
+        markdown += f"""
+# Project [{digest['project_name']}]({todoist_project_link(digest['project_id'])})
+
+_targeting user {target_user}_
+
+## Comments
+{digest['comments']}
+
+## Added Tasks
+{digest['new_tasks']}
+
+## Completed Tasks
+{digest['completed_tasks']}
+
+"""
 
     print(markdown)
 
@@ -384,15 +425,15 @@ _targeting user {target_user} on project {target_project_name}_
         send_markdown_email(
             email_auth,
             markdown,
-            f"{last_synced_date_formatted}-{now_time_formatted} Todoist Digest for {target_project_name}",
+            f"{last_synced_date_formatted}-{now_time_formatted} Todoist Digest for {formatted_project_header}",
             email_to,
         )
 
 
 @click.command()
-@click.option("--last-synced", required=True, help="The last synced date.")
-@click.option("--target-user", required=True, help="The target user.")
-@click.option("--target-project", required=True, help="The target project.")
+@click.option("--last-synced", required=True, help="The last synced date")
+@click.option("--target-user", required=True, help="The target user")
+@click.option("--target-project", required=True, help="The target project")
 @click.option("--email-auth", required=False, help="Authorization URL for SMTP emailer")
 @click.option(
     "--email-to",
