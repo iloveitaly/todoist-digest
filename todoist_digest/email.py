@@ -1,18 +1,38 @@
 import logging
 import os
+import re
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from urllib.parse import urlparse
 
+import css_inline
 import markdown2
+from jinja2 import Template
 
 logger = logging.getLogger(__name__)
 
 
+def process_markdown(markdown, subject):
+    digest_html_content = markdown2.markdown(markdown)
+
+    # render the full html template
+    template_path = os.path.join(os.path.dirname(__file__), "../template.jinga2")
+    html_content = Template(open(template_path).read()).render(
+        preheader="", title=subject, content=digest_html_content
+    )
+
+    inlined_css = css_inline.inline(html_content)
+
+    # https://stackoverflow.com/questions/28208186/how-to-remove-html-comments-using-regex-in-python
+    comments_removed = re.sub("(<!--.*?-->)", "", inlined_css, flags=re.DOTALL)
+
+    return comments_removed
+
+
 def send_markdown_email(auth_url, markdown_content, subject, to_addresses):
     parsed_url = urlparse(auth_url)
-    html_content = markdown2.markdown(markdown_content)
+    html_content = process_markdown(markdown_content, subject)
 
     msg = MIMEMultipart()
     msg["From"] = os.environ.get("EMAIL_FROM", parsed_url.username)

@@ -42,6 +42,10 @@ table {
     vertical-align: top;
 }
 
+p {
+  overflow-wrap: anywhere;
+}
+
 /* -------------------------------------
     BODY & CONTAINER
 ------------------------------------- */
@@ -54,7 +58,7 @@ table {
 /* Set a max-width, and make it display as block so it will automatically stretch to that width, but will also shrink down on a phone or something */
 .container {
   display: block;
-  Margin: 0 auto !important;
+  margin: 0 auto !important;
   /* makes it centered */
   max-width: 580px;
   padding: 10px;
@@ -65,7 +69,7 @@ table {
 .content {
   box-sizing: border-box;
   display: block;
-  Margin: 0 auto;
+  margin: 0 auto;
   max-width: 580px;
   padding: 10px;
 }
@@ -338,7 +342,7 @@ hr {
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
               <tr>
                 <td class="align-center" width="100%">
-                  <a href="https://github.com/iloveitaly/todoist-digest"><img src="https://cdn.postdrop.io/starter-templates-v0/postdrop-logo-dark.png" height="40" alt="Postdrop"></a>
+                  <a href="https://github.com/iloveitaly/todoist-digest"><img src="https://raw.githubusercontent.com/iloveitaly/todoist-digest/master/logo.webp" height="40" alt="Postdrop"></a>
                 </td>
               </tr>
             </table>

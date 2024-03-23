@@ -5,7 +5,6 @@ from todoist_digest.patch import patch_todoist_api  # isort: split
 patch_todoist_api()  # isort: split
 
 import datetime
-import inspect
 import logging
 import os
 import re
@@ -150,7 +149,7 @@ def generate_markdown_for_new_tasks(new_tasks: list) -> str:
     for task in new_tasks:
         task_content = strip_markdown_links(task["content"])
 
-        markdown.append(f"## [{task_content}]({todoist_task_link(task['id'])})")
+        markdown.append(f"### [{task_content}]({todoist_task_link(task['id'])})")
 
     return "\n\n".join(markdown)
 
@@ -165,7 +164,7 @@ def generate_markdown_for_comments(task_map, comments_by_task_id: dict) -> str:
 
         task_content = strip_markdown_links(task.content)
 
-        markdown.append(f"## [{task_content}]({todoist_task_link(task_id)})")
+        markdown.append(f"### [{task_content}]({todoist_task_link(task_id)})")
 
         def add_content_to_attachments(comment):
             if comment["content"] != "":
@@ -203,7 +202,7 @@ def generate_markdown_for_completed_tasks(completed_tasks: list) -> str:
     for task in completed_tasks:
         task_content = strip_markdown_links(task["content"])
 
-        markdown.append(f"## [{task_content}]({todoist_task_link(task['id'])})")
+        markdown.append(f"### [{task_content}]({todoist_task_link(task['id'])})")
 
     return "\n\n".join(markdown)
 
@@ -261,13 +260,10 @@ def get_completed_tasks(api: TodoistAPI, project_id):
     )
 
 
-def project_digest(api, last_synced, target_user, target_project_name_or_id):
+def project_digest(api, last_synced, target_user, projects, target_project_name_or_id):
     """
     Project(color='blue', comment_count=0, id='project_id', is_favorite=False, is_inbox_project=False, is_shared=True, is_team_inbox=False, name='Project_Name', order=14, parent_id=None, url='https://todoist.com/showProject?id=project_id', view_style='list')]
     """
-    logger.info("getting projects")
-
-    projects = api.get_projects()
 
     # if digit, then a ID and not a name was passed
     if target_project_name_or_id.isdigit():
@@ -285,10 +281,10 @@ def project_digest(api, last_synced, target_user, target_project_name_or_id):
 
         target_project_id = target_project.id
 
-    logger.info("getting completed tasks")
+    logger.info(f"getting completed tasks {target_project_name}")
     completed_tasks = get_completed_tasks(api, target_project_id)
 
-    logger.info("getting tasks")
+    logger.info(f"getting tasks {target_project_name}")
     tasks = api.get_tasks(project_id=target_project_id)
 
     all_tasks = tasks + completed_tasks
@@ -318,7 +314,7 @@ def project_digest(api, last_synced, target_user, target_project_name_or_id):
     Comment(attachment=None, content='- Lorem ipsum dolor sit amet?\n- Consectetur adipiscing elit?', id='comment_id', posted_at='2023-10-16T16:02:55.059574Z', project_id=None, task_id='task_id')
     """
 
-    logger.info("getting comments")
+    logger.info(f"getting comments {target_project_name}")
 
     comments = (
         all_tasks
@@ -341,17 +337,19 @@ def project_digest(api, last_synced, target_user, target_project_name_or_id):
 
     filtered_completed_tasks = (
         completed_tasks
-        | fp.lfilter(
-            lambda comment: parse_todoist_date(comment.completed_at) > last_synced
-        )
+        # old tasks drop the completed_at field
+        | fp.where_not_attr(completed_at=None)
+        | fp.lfilter(lambda task: parse_todoist_date(task.completed_at) > last_synced)
         | fp.lmap(object_to_dict)
         | fp.lmap(f.partial(enrich_completed_tasks, api))
         | fp.where(initiator_id=filter_user_id)
         | fp.to_list()
     )
 
-    logger.info("getting new tasks")
+    logger.info(f"getting new tasks {target_project_name}")
+
     last_synced_date_for_todoist_filter = last_synced.strftime("%m/%d/%Y")
+
     new_tasks = (
         api.get_tasks(
             filter=f"#{target_project_name} & created after: {last_synced_date_for_todoist_filter}",
@@ -376,6 +374,7 @@ def project_digest(api, last_synced, target_user, target_project_name_or_id):
 
 def main(last_synced, target_user, target_project, email_auth, email_to):
     api = get_api()
+    projects = api.get_projects()
     last_synced_date = parser.parse(last_synced)
 
     # allow multiple projects to be passed in via a comma separated list
@@ -388,18 +387,17 @@ def main(last_synced, target_user, target_project, email_auth, email_to):
 
     project_digests = (
         target_projects
-        | fp.map(fp.partial(project_digest, api, last_synced_date, target_user))
+        | fp.map(
+            fp.partial(project_digest, api, last_synced_date, target_user, projects)
+        )
         | fp.to_list()
     )
-    breakpoint()
 
     formatted_project_header = ", ".join(
         project_digests | fp.pluck("project_name") | fp.to_list()
     )
 
-    for project_identifier in target_projects:
-        digest = project_digest(api, last_synced, target_user, project_identifier)
-
+    for digest in project_digests:
         markdown += f"""
 # Project [{digest['project_name']}]({todoist_project_link(digest['project_id'])})
 
