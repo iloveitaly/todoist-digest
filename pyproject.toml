@@ -24,7 +24,7 @@ apscheduler = "^3.10.4"
 isort = "5.11.5"
 black = "^24.3.0"
 pylint = "^3.1.0"
-pyright = "^1.1.354"
+pyright = "^1.1.355"
 
 [tool.isort]
 profile = "black"
