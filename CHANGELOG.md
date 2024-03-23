@@ -1,3 +1,20 @@
+# [0.8.0](https://github.com/iloveitaly/todoist-digest/compare/v0.7.0...v0.8.0) (2024-03-23)
+
+
+### Bug Fixes
+
+* increase backoff ([b0a7c60](https://github.com/iloveitaly/todoist-digest/commit/b0a7c605700a73420042da391740c8b4e12320b4))
+
+
+### Features
+
+* initial template code ([acfc23e](https://github.com/iloveitaly/todoist-digest/commit/acfc23e91a0f641406380f48c9794ea770964554))
+* support multiple projects in digest ([7a253ab](https://github.com/iloveitaly/todoist-digest/commit/7a253aba25b8b7d14ca96aafd832b7f814a6647d))
+* **template:** css styles ([85a9fa2](https://github.com/iloveitaly/todoist-digest/commit/85a9fa2b41548a471ea52a0723af94787057da44))
+* **template:** finalized email template ([4d25885](https://github.com/iloveitaly/todoist-digest/commit/4d258850ed647d5feb559eab2ab6cf4299671699))
+
+
+
 # [0.7.0](https://github.com/iloveitaly/todoist-digest/compare/v0.6.1...v0.7.0) (2024-03-16)
 
 
@@ -37,15 +54,6 @@
 
 * ident ([7ed6c72](https://github.com/iloveitaly/todoist-digest/commit/7ed6c7233df238fdfbaed88ec3c290e05851c028))
 * support TARGET_PROJECT as id ([9827899](https://github.com/iloveitaly/todoist-digest/commit/9827899ef3f087836b1b04e1c4a2550162131f54))
-
-
-
-# [0.5.0](https://github.com/iloveitaly/todoist-digest/compare/v0.4.5...v0.5.0) (2024-02-07)
-
-
-### Features
-
-* fake feat bump to force ci to run completely ([04b605c](https://github.com/iloveitaly/todoist-digest/commit/04b605c0780da72dfb935ee2643643cffc42a195))
 
 
 
