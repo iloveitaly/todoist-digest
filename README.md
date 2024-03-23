@@ -1,4 +1,4 @@
-# Todoist Project Digest
+# Todoist Project Digest [![Release Notes](https://img.shields.io/github/release/iloveitaly/todoist-digest)](https://github.com/iloveitaly/todoist-digest/releases) [![Downloads](https://static.pepy.tech/badge/todoist-digest/month)](https://pepy.tech/project/todoist-digest) [![Python Versions](https://img.shields.io/pypi/pyversions/todoist-digest)](https://pypi.org/project/todoist-digest) ![GitHub CI Status](https://github.com/iloveitaly/todoist-digest/actions/workflows/build_and_publish.yml/badge.svg) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 [Todoist](https://mikebian.co/todoist) doesn't have a way to generate a digest of all recent comments in a project created by a specific user. This makes it challenging to see what changed and what requires your action if you are collaborating with someone on a project.
 

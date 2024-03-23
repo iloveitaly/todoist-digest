@@ -1,5 +1,7 @@
 # https://raw.githubusercontent.com/embedez/ez-cdn/697dbc6dc1496d27b96c57994130f43da7477300/.github/workflows/build.yml
 
+name: Build & Publish
+
 on:
   push:
     branches:
