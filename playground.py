@@ -24,6 +24,30 @@ last_synced_date = parser.parse("2023-12-08T16:36:30Z")
 target_user = os.getenv("TARGET_USER")
 filter_user_id = "6305953"
 
+# TODO how to determine if a project is a team project?
+projects = api.get_projects()
+shared_projects = projects | fp.where_attr(is_shared=True) | fp.to_list()
+collaborators = collaborator_map(api)
+
+
+def enhance_state(state):
+    return state | {
+        "project_name": (
+            projects | fp.where_attr(id=state["project_id"]) | fp.first()
+        ).name
+    }
+
+
+collaborator_states = todoist_get_sync_resource(api, "collaborators")[
+    "collaborator_states"
+]
+sharing_map = (
+    collaborator_states
+    | fp.where(is_deleted=False, state="active")
+    | fp.group_by(itemgetter("user_id"))
+)
+",".join(sharing_map["2503564"] | fp.pluck("project_id"))
+
 end_keys = locals().keys()
 new_keys = set(end_keys) - start_keys
 formatted_keys = "\n - ".join(new_keys)
