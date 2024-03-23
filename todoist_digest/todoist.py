@@ -7,6 +7,10 @@ from functools import lru_cache
 
 # https://github.com/iloveitaly/todoist-api-python/commit/ec83531fae94a2ccd0a4bd6b2d1db95d86b129b6
 def todoist_get_sync_resource(api, resource_type):
+    """
+    >>> todoist_get_sync_resource(api, "collaborators")
+    """
+
     from todoist_api_python.endpoints import get_sync_url
     from todoist_api_python.http_requests import post
 
