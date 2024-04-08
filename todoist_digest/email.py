@@ -2,10 +2,12 @@ import logging
 import os
 import re
 import smtplib
+import ssl
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from urllib.parse import urlparse
 
+import backoff
 import css_inline
 import markdown2
 from jinja2 import Template
@@ -30,6 +32,8 @@ def process_markdown(markdown, subject):
     return comments_removed
 
 
+# SSLEOFError was thrown a couple times via resend
+@backoff.on_exception(backoff.expo, ssl.SSLEOFError, max_tries=5)
 def send_markdown_email(auth_url, markdown_content, subject, to_addresses):
     parsed_url = urlparse(auth_url)
     html_content = process_markdown(markdown_content, subject)
