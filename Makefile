@@ -31,3 +31,8 @@ build-debug: build-dump
 
 docker-push: build
 	docker push $(IMAGE_NAME):$(IMAGE_TAG)
+
+lint:
+	black .
+	isort .
+# pyright .
