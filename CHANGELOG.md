@@ -1,3 +1,12 @@
+## [0.8.1](https://github.com/iloveitaly/todoist-digest/compare/v0.8.0...v0.8.1) (2024-04-08)
+
+
+### Bug Fixes
+
+* more expansive retry policy ([5b0850c](https://github.com/iloveitaly/todoist-digest/commit/5b0850cc7653e4a35758956ec443c8d472df3650))
+
+
+
 # [0.8.0](https://github.com/iloveitaly/todoist-digest/compare/v0.7.0...v0.8.0) (2024-03-23)
 
 
@@ -44,16 +53,6 @@
 ### Features
 
 * include comments on completed tasks ([329bfc5](https://github.com/iloveitaly/todoist-digest/commit/329bfc5c8c830b19cc058a80c3d96dbd2da5f654))
-
-
-
-## [0.5.1](https://github.com/iloveitaly/todoist-digest/compare/v0.5.0...v0.5.1) (2024-02-19)
-
-
-### Bug Fixes
-
-* ident ([7ed6c72](https://github.com/iloveitaly/todoist-digest/commit/7ed6c7233df238fdfbaed88ec3c290e05851c028))
-* support TARGET_PROJECT as id ([9827899](https://github.com/iloveitaly/todoist-digest/commit/9827899ef3f087836b1b04e1c4a2550162131f54))
 
 
 
