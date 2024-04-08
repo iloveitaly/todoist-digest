@@ -1,3 +1,12 @@
+## [0.8.2](https://github.com/iloveitaly/todoist-digest/compare/v0.8.1...v0.8.2) (2024-04-08)
+
+
+### Bug Fixes
+
+* adding email backoff based on resend errors ([5c4e0ed](https://github.com/iloveitaly/todoist-digest/commit/5c4e0edc0a7b9d21c98bab81fb28ca7c7ebc551e))
+
+
+
 ## [0.8.1](https://github.com/iloveitaly/todoist-digest/compare/v0.8.0...v0.8.1) (2024-04-08)
 
 
@@ -39,20 +48,6 @@
 ### Bug Fixes
 
 * adding EMAIL_FROM option ([baf5d5a](https://github.com/iloveitaly/todoist-digest/commit/baf5d5a0ab7830b8de3f7f3b24fd370a2491b4e0))
-
-
-
-# [0.6.0](https://github.com/iloveitaly/todoist-digest/compare/v0.5.1...v0.6.0) (2024-03-12)
-
-
-### Bug Fixes
-
-* remove weekend skip ([a3f43f8](https://github.com/iloveitaly/todoist-digest/commit/a3f43f8277c33ddea72365b35ee404d18fd83f3d))
-
-
-### Features
-
-* include comments on completed tasks ([329bfc5](https://github.com/iloveitaly/todoist-digest/commit/329bfc5c8c830b19cc058a80c3d96dbd2da5f654))
 
 
 
