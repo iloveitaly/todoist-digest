@@ -40,7 +40,7 @@ def send_markdown_email(auth_url, markdown_content, subject, to_addresses):
     msg["Subject"] = subject
 
     logger.info(
-        "creating email for %s, from %s, content length %i",
+        "creating email for '%s', from '%s', content length %i",
         to_addresses,
         parsed_url.username,
         len(markdown_content),

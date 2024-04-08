@@ -21,12 +21,16 @@ def patch_todoist_api():
             original_function,
         )
 
-        # raw response on 429
-        # b'{"error":"Too many requests. Limits reached. Try again later","error_code":35,"error_extra":{"event_id":"07c3fb965eaa4ec6a42e977c3e035c6b","retry_after":66},"error_tag":"LIMITS_REACHED","http_code":429}'
+        # raw response on 429:
+        #   b'{"error":"Too many requests. Limits reached. Try again later","error_code":35,"error_extra":{"event_id":"07c3fb965eaa4ec6a42e977c3e035c6b","retry_after":66},"error_tag":"LIMITS_REACHED","http_code":429}'
 
         # TODO pretty sure authorization errors are retried :/
         patched_function = backoff.on_exception(
-            backoff.expo, requests.exceptions.HTTPError, max_tries=30
+            backoff.expo,
+            # RequestException superclass is IOError, which is a low-level py error
+            # tried using HTTPError as the retry, but at scale the Todoist API has lots of interesting failures
+            (requests.exceptions.RequestException),
+            max_tries=30,
         )(original_function)
 
         setattr(
