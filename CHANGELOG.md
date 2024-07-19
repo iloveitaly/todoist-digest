@@ -1,3 +1,12 @@
+# [0.9.0](https://github.com/iloveitaly/todoist-digest/compare/v0.8.2...v0.9.0) (2024-07-19)
+
+
+### Features
+
+* multi-arch docker build ([bddbd88](https://github.com/iloveitaly/todoist-digest/commit/bddbd8864217e1ff8c982d98e6b1f96a75e61dae))
+
+
+
 ## [0.8.2](https://github.com/iloveitaly/todoist-digest/compare/v0.8.1...v0.8.2) (2024-04-08)
 
 
@@ -39,15 +48,6 @@
 ### Features
 
 * support multiple to emails ([e3913eb](https://github.com/iloveitaly/todoist-digest/commit/e3913eb1481bf1b0235af30837dc59acabab894e))
-
-
-
-## [0.6.1](https://github.com/iloveitaly/todoist-digest/compare/v0.6.0...v0.6.1) (2024-03-15)
-
-
-### Bug Fixes
-
-* adding EMAIL_FROM option ([baf5d5a](https://github.com/iloveitaly/todoist-digest/commit/baf5d5a0ab7830b8de3f7f3b24fd370a2491b4e0))
 
 
 
