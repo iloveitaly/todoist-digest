@@ -13,3 +13,4 @@ services:
       # the container will *not* assume the TZ of the host without this
       # make sure your host has this set
       - TZ=${TZ}
+      - OMIT_EMPTY_SECTIONS=true
