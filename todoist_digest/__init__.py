@@ -154,8 +154,10 @@ def generate_markdown_for_new_tasks(new_tasks: list) -> str:
     return "\n\n".join(markdown)
 
 
-def generate_markdown_for_comments(task_map, comments_by_task_id: dict) -> str:
+def generate_markdown_for_comments(task_map, comments_by_task_id: dict, omit_empty_sections: bool) -> str:
     if not comments_by_task_id:
+        if omit_empty_sections:
+            return ""
         return "*No comments*"
 
     markdown = []
@@ -260,7 +262,7 @@ def get_completed_tasks(api: TodoistAPI, project_id):
     )
 
 
-def project_digest(api, last_synced, target_user, projects, target_project_name_or_id):
+def project_digest(api, last_synced, target_user, projects, target_project_name_or_id, omit_empty_sections):
     """
     Project(color='blue', comment_count=0, id='project_id', is_favorite=False, is_inbox_project=False, is_shared=True, is_team_inbox=False, name='Project_Name', order=14, parent_id=None, url='https://todoist.com/showProject?id=project_id', view_style='list')]
     """
@@ -364,7 +366,7 @@ def project_digest(api, last_synced, target_user, projects, target_project_name_
     return {
         "project_id": target_project_id,
         "project_name": target_project_name,
-        "comments": generate_markdown_for_comments(task_map, comments),
+        "comments": generate_markdown_for_comments(task_map, comments, omit_empty_sections),
         "new_tasks": generate_markdown_for_new_tasks(new_tasks),
         "completed_tasks": generate_markdown_for_completed_tasks(
             filtered_completed_tasks
@@ -372,7 +374,7 @@ def project_digest(api, last_synced, target_user, projects, target_project_name_
     }
 
 
-def main(last_synced, target_user, target_project, email_auth, email_to):
+def main(last_synced, target_user, target_project, email_auth, email_to, omit_empty_sections):
     api = get_api()
     projects = api.get_projects()
     last_synced_date = parser.parse(last_synced)
@@ -388,7 +390,7 @@ def main(last_synced, target_user, target_project, email_auth, email_to):
     project_digests = (
         target_projects
         | fp.map(
-            fp.partial(project_digest, api, last_synced_date, target_user, projects)
+            fp.partial(project_digest, api, last_synced_date, target_user, projects, omit_empty_sections)
         )
         | fp.to_list()
     )
@@ -398,6 +400,11 @@ def main(last_synced, target_user, target_project, email_auth, email_to):
     )
 
     for digest in project_digests:
+        if omit_empty_sections and not any(
+            [digest["comments"], digest["new_tasks"], digest["completed_tasks"]]
+        ):
+            continue
+
         markdown += f"""
 # Project [{digest['project_name']}]({todoist_project_link(digest['project_id'])})
 
@@ -438,8 +445,13 @@ _targeting user {target_user}_
     required=False,
     help="Email(s) to send digest to. Separate multiple emails with a comma.",
 )
-def cli(last_synced, target_user, target_project, email_auth, email_to):
-    main(last_synced, target_user, target_project, email_auth, email_to)
+@click.option(
+    "--omit-empty-sections",
+    is_flag=True,
+    help="Omit empty sections and projects from the digest",
+)
+def cli(last_synced, target_user, target_project, email_auth, email_to, omit_empty_sections):
+    main(last_synced, target_user, target_project, email_auth, email_to, omit_empty_sections)
 
 
 if __name__ == "__main__":

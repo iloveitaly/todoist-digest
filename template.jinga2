@@ -131,7 +131,6 @@ h1 {
   font-size: 35px;
   font-weight: 300;
   text-align: center;
-  text-transform: capitalize;
 }
 
 p,
@@ -359,7 +358,29 @@ hr {
                   <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                     <tr>
                       <td>
-                        {{ content }}
+                        {% if comments %}
+                        <h2>Comments</h2>
+                        {{ comments }}
+                        {% elif not omit_empty_sections %}
+                        <h2>Comments</h2>
+                        <p>No comments</p>
+                        {% endif %}
+
+                        {% if new_tasks %}
+                        <h2>New Tasks</h2>
+                        {{ new_tasks }}
+                        {% elif not omit_empty_sections %}
+                        <h2>New Tasks</h2>
+                        <p>No new tasks</p>
+                        {% endif %}
+
+                        {% if completed_tasks %}
+                        <h2>Completed Tasks</h2>
+                        {{ completed_tasks }}
+                        {% elif not omit_empty_sections %}
+                        <h2>Completed Tasks</h2>
+                        <p>No completed tasks</p>
+                        {% endif %}
                       </td>
                     </tr>
                   </table>

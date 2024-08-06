@@ -66,6 +66,18 @@ poetry run todoist-digest \
   --email-to $EMAIL_TO
 ```
 
+Or, omit empty sections and projects from the digest:
+
+```shell
+poetry run todoist-digest \
+  --last-synced $LAST_SYNC \
+  --target-user $TARGET_USER \
+  --target-project $TARGET_PROJECT \
+  --email-auth $EMAIL_AUTH \
+  --email-to $EMAIL_TO \
+  --omit-empty-sections
+```
+
 ## Development
 
 ### Docker Build
