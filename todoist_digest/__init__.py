@@ -1,8 +1,11 @@
-import logging
+import funcy_pipe as fp
 
-from todoist_digest.patch import patch_todoist_api  # isort: split
+from .patch import patch_todoist_api
 
 patch_todoist_api()  # isort: split
+
+# extend funcy with all of the helpful additions I like :)
+fp.patch()  # isort: split
 
 import datetime
 import logging
@@ -13,36 +16,23 @@ from functools import lru_cache
 
 import click
 import funcy as f
-import funcy_pipe as fp
 from dateutil import parser
 from todoist_api_python.api import TodoistAPI
 from todoist_api_python.models import Section
 from whatever import that
 
-from todoist_digest.email import send_markdown_email
-from todoist_digest.todoist import (
+from .email import send_markdown_email
+from .templates import render_template
+from .todoist import (
     todoist_get_completed_activity,
     todoist_get_item_info,
     todoist_get_sync_resource,
 )
-
-# extend funcy with all of the helpful additions I like :)
-fp.patch()
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+from .util import TEMPLATES_DIRECTORY, log
 
 # redirect to stderr so we can collect markdown from stdout
-handler = logging.StreamHandler(sys.stderr)
-logger.addHandler(handler)
-
-# conditionally import pretty traceback
-try:
-    import pretty_traceback
-
-    pretty_traceback.install()
-except ImportError:
-    pass
+# handler = logging.StreamHandler(sys.stderr)
+# log.addHandler(handler)
 
 
 @lru_cache(maxsize=None)
@@ -76,7 +66,7 @@ def enrich_completed_tasks(api, task):
         pass
 
     if len(completed_activity["events"]) == 0:
-        logger.warning("Expected at least one completion activity")
+        log.warning("Expected at least one completion activity")
         return task | {"initiator_id": None}
 
     event = completed_activity["events"][0]
@@ -141,30 +131,33 @@ def todoist_project_link(project_id):
     return f"https://todoist.com/showProject?id={project_id}"
 
 
-def generate_markdown_for_new_tasks(new_tasks: list) -> str:
+def generate_markdown_for_new_tasks(new_tasks: list) -> list[dict] | None:
     if not new_tasks:
-        return "*No new tasks*"
+        return None
 
-    markdown = []
+    render_nodes = []
     for task in new_tasks:
         task_content = strip_markdown_links(task["content"])
 
-        markdown.append(f"### [{task_content}]({todoist_task_link(task['id'])})")
+        render_nodes.append(
+            {"task_content": task_content, "task_link": todoist_task_link(task["id"])}
+        )
 
-    return "\n\n".join(markdown)
+    return render_nodes
 
 
-def generate_markdown_for_comments(task_map, comments_by_task_id: dict) -> str:
+def generate_markdown_for_comments(
+    task_map, comments_by_task_id: dict
+) -> list[dict] | None:
     if not comments_by_task_id:
-        return "*No comments*"
+        return None
 
-    markdown = []
+    render_nodes = []
+
     for task_id, comments in comments_by_task_id.items():
         task = task_map[task_id]
 
         task_content = strip_markdown_links(task.content)
-
-        markdown.append(f"### [{task_content}]({todoist_task_link(task_id)})")
 
         def add_content_to_attachments(comment):
             if comment["content"] != "":
@@ -178,7 +171,7 @@ def generate_markdown_for_comments(task_map, comments_by_task_id: dict) -> str:
 
             return f"_{formatted_date}_: {content}"
 
-        markdown.append(
+        transformed_comments = (
             comments
             | fp.map(add_content_to_attachments)
             | fp.map(
@@ -191,20 +184,33 @@ def generate_markdown_for_comments(task_map, comments_by_task_id: dict) -> str:
             | fp.str_join("\n\n---\n\n")
         )
 
-    return "\n\n".join(markdown)
+        render_nodes.append(
+            {
+                "task_content": task_content,
+                "task_link": todoist_task_link(task_id),
+                "comments": transformed_comments,
+            }
+        )
+
+    return render_nodes
 
 
-def generate_markdown_for_completed_tasks(completed_tasks: list) -> str:
+def generate_markdown_for_completed_tasks(completed_tasks: list) -> list[dict] | None:
     if not completed_tasks:
-        return "*No completed tasks*"
+        return None
 
-    markdown = []
+    render_nodes = []
+
     for task in completed_tasks:
         task_content = strip_markdown_links(task["content"])
+        render_nodes.append(
+            {
+                "task_content": task_content,
+                "task_link": todoist_task_link(task["id"]),
+            }
+        )
 
-        markdown.append(f"### [{task_content}]({todoist_task_link(task['id'])})")
-
-    return "\n\n".join(markdown)
+    return render_nodes
 
 
 def get_api():
@@ -281,10 +287,10 @@ def project_digest(api, last_synced, target_user, projects, target_project_name_
 
         target_project_id = target_project.id
 
-    logger.info(f"getting completed tasks {target_project_name}")
+    log.info(f"getting completed tasks {target_project_name}")
     completed_tasks = get_completed_tasks(api, target_project_id)
 
-    logger.info(f"getting tasks {target_project_name}")
+    log.info(f"getting tasks {target_project_name}")
     tasks = api.get_tasks(project_id=target_project_id)
 
     all_tasks = tasks + completed_tasks
@@ -314,7 +320,7 @@ def project_digest(api, last_synced, target_user, projects, target_project_name_
     Comment(attachment=None, content='- Lorem ipsum dolor sit amet?\n- Consectetur adipiscing elit?', id='comment_id', posted_at='2023-10-16T16:02:55.059574Z', project_id=None, task_id='task_id')
     """
 
-    logger.info(f"getting comments {target_project_name}")
+    log.info(f"getting comments {target_project_name}")
 
     comments = (
         all_tasks
@@ -346,14 +352,16 @@ def project_digest(api, last_synced, target_user, projects, target_project_name_
         | fp.to_list()
     )
 
-    logger.info(f"getting new tasks {target_project_name}")
+    log.info(f"getting new tasks {target_project_name}")
 
     last_synced_date_for_todoist_filter = last_synced.strftime("%m/%d/%Y")
 
+    todoist_new_task_filter = (
+        f"#{target_project_name} & created after: {last_synced_date_for_todoist_filter}"
+    )
+
     new_tasks = (
-        api.get_tasks(
-            filter=f"#{target_project_name} & created after: {last_synced_date_for_todoist_filter}",
-        )
+        api.get_tasks(filter=todoist_new_task_filter)
         | fp.lmap(object_to_dict)
         | fp.where(creator_id=filter_user_id, parent_id=None)
         # exclude any tasks which are already reported in the comments
@@ -372,7 +380,7 @@ def project_digest(api, last_synced, target_user, projects, target_project_name_
     }
 
 
-def main(last_synced, target_user, target_project, email_auth, email_to):
+def main(last_synced, target_user, target_project, email_auth, email_to, omit_empty):
     api = get_api()
     projects = api.get_projects()
     last_synced_date = parser.parse(last_synced)
@@ -382,8 +390,6 @@ def main(last_synced, target_user, target_project, email_auth, email_to):
         target_projects = target_project.split(",") | fp.map(str.strip)
     else:
         target_projects = [target_project]
-
-    markdown = ""
 
     project_digests = (
         target_projects
@@ -397,24 +403,24 @@ def main(last_synced, target_user, target_project, email_auth, email_to):
         project_digests | fp.pluck("project_name") | fp.to_list()
     )
 
-    for digest in project_digests:
-        markdown += f"""
-# Project [{digest['project_name']}]({todoist_project_link(digest['project_id'])})
+    def render_digest(digest):
+        return render_template(
+            TEMPLATES_DIRECTORY / "message.jinja",
+            {
+                "omit_empty": omit_empty,
+                "target_user": target_user,
+                "project_name": digest["project_name"],
+                "project_id": digest["project_id"],
+                "project_link": todoist_project_link(digest["project_id"]),
+                "comments": digest["comments"],
+                "new_tasks": digest["new_tasks"],
+                "completed_tasks": digest["completed_tasks"],
+            },
+        )
 
-_targeting user {target_user}_
+    markdown = project_digests | fp.map(render_digest) | fp.join_str("\n")
 
-## Comments
-{digest['comments']}
-
-## Added Tasks
-{digest['new_tasks']}
-
-## Completed Tasks
-{digest['completed_tasks']}
-
-"""
-
-    print(markdown)
+    log.debug("generated project markdown", markdown=markdown)
 
     if email_auth:
         now_time_formatted = datetime.datetime.now().strftime("%m/%d")
@@ -434,12 +440,18 @@ _targeting user {target_user}_
 @click.option("--target-project", required=True, help="The target project")
 @click.option("--email-auth", required=False, help="Authorization URL for SMTP emailer")
 @click.option(
+    "--omit-empty",
+    is_flag=True,
+    help="Omit empty sections from the digest content",
+    default=True,
+)
+@click.option(
     "--email-to",
     required=False,
     help="Email(s) to send digest to. Separate multiple emails with a comma.",
 )
-def cli(last_synced, target_user, target_project, email_auth, email_to):
-    main(last_synced, target_user, target_project, email_auth, email_to)
+def cli(last_synced, target_user, target_project, email_auth, email_to, omit_empty):
+    main(last_synced, target_user, target_project, email_auth, email_to, omit_empty)
 
 
 if __name__ == "__main__":

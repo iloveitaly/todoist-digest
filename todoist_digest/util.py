@@ -5,7 +5,6 @@ from pathlib import Path
 
 import structlog
 from decouple import config
-from jinja2 import Template
 
 ROOT_DIRECTORY = Path(__file__).parent.parent.resolve()
 TEMPLATES_DIRECTORY = ROOT_DIRECTORY / "templates"
@@ -58,8 +57,3 @@ def configure_logger():
 
 log = structlog.get_logger()
 configure_logger()
-
-
-def render_template(template_path: Path, context: dict) -> str:
-    html_content = Template(open(str(template_path)).read()).render(**context)
-    return html_content

@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta name="viewport" content="width=device-width" />
@@ -6,7 +6,7 @@
     <title>{{ title }}</title>
   </head>
   <style>
-  /* -------------------------------------
+/* -------------------------------------
     GLOBAL RESETS
 ------------------------------------- */
 
@@ -19,7 +19,7 @@ img {
 }
 
 body {
-  background-color: #eaebed;
+  background-color: #f3f3f3;
   font-family: sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
@@ -51,7 +51,7 @@ p {
 ------------------------------------- */
 
 .body {
-  background-color: #eaebed;
+  background-color: #f3f3f3;
   width: 100%;
 }
 
@@ -60,9 +60,9 @@ p {
   display: block;
   margin: 0 auto !important;
   /* makes it centered */
-  max-width: 580px;
+  max-width: 640px;
   padding: 10px;
-  width: 580px;
+  width: 640px;
 }
 
 /* This should also be a block element, so that it will fill 100% of the .container */
@@ -70,7 +70,7 @@ p {
   box-sizing: border-box;
   display: block;
   margin: 0 auto;
-  max-width: 580px;
+  max-width: 640px;
   padding: 10px;
 }
 
@@ -332,43 +332,45 @@ hr {
     border-color: #d5075d !important;
   }
 }
-</style>
+  </style>
   <body class="">
-    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
+    <table role="presentation"
+           border="0"
+           cellpadding="0"
+           cellspacing="0"
+           class="body">
       <tr>
         <td>&nbsp;</td>
         <td class="container">
+          <!--
           <div class="header">
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
               <tr>
                 <td class="align-center" width="100%">
-                  <a href="https://github.com/iloveitaly/todoist-digest"><img src="https://raw.githubusercontent.com/iloveitaly/todoist-digest/master/logo.webp" height="40" alt="Postdrop"></a>
+                  <a href="https://github.com/iloveitaly/todoist-digest">
+                    <img src="https://raw.githubusercontent.com/iloveitaly/todoist-digest/master/logo.webp" height="40" alt="Postdrop">
+                  </a>
                 </td>
               </tr>
             </table>
           </div>
+          -->
           <div class="content">
-
             <!-- START CENTERED WHITE CONTAINER -->
             <span class="preheader">{{ preheader }}</span>
             <table role="presentation" class="main">
-
               <!-- START MAIN CONTENT AREA -->
               <tr>
                 <td class="wrapper">
                   <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                     <tr>
-                      <td>
-                        {{ content }}
-                      </td>
+                      <td>{{ content }}</td>
                     </tr>
                   </table>
                 </td>
               </tr>
-
-            <!-- END MAIN CONTENT AREA -->
+              <!-- END MAIN CONTENT AREA -->
             </table>
-
             <!-- START FOOTER -->
             <div class="footer">
               <table role="presentation" border="0" cellpadding="0" cellspacing="0">
@@ -382,14 +384,13 @@ hr {
                 -->
                 <tr>
                   <td class="content-block powered-by">
-                    Powered by <a href="https://github.com/iloveitaly/todoist-digest">Todoist Digest</a>.
+                    Powered by <a . href="https://github.com/iloveitaly/todoist-digest">Todoist Digest</a .
                   </td>
                 </tr>
               </table>
             </div>
             <!-- END FOOTER -->
-
-          <!-- END CENTERED WHITE CONTAINER -->
+            <!-- END CENTERED WHITE CONTAINER -->
           </div>
         </td>
         <td>&nbsp;</td>

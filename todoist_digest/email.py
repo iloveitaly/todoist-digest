@@ -10,19 +10,25 @@ from urllib.parse import urlparse
 import backoff
 import css_inline
 import markdown2
-from jinja2 import Template
 
-logger = logging.getLogger(__name__)
+from todoist_digest.templates import render_template
+from todoist_digest.util import TEMPLATES_DIRECTORY
+
+from .util import log
 
 
 def process_markdown(markdown, subject):
     digest_html_content = markdown2.markdown(markdown)
 
     # render the full html template
-    template_path = os.path.join(os.path.dirname(__file__), "../template.jinga2")
-    html_content = Template(open(template_path).read()).render(
-        preheader="", title=subject, content=digest_html_content
+    html_content = render_template(
+        TEMPLATES_DIRECTORY / "email.jinja",
+        {"preheader": "", "title": subject, "content": digest_html_content},
     )
+
+    # html_content = Template(open(str(template_path)).read()).render(
+    #     preheader="", title=subject, content=digest_html_content
+    # )
 
     inlined_css = css_inline.inline(html_content)
 
@@ -43,7 +49,7 @@ def send_markdown_email(auth_url, markdown_content, subject, to_addresses):
     msg["To"] = to_addresses
     msg["Subject"] = subject
 
-    logger.info(
+    log.info(
         "creating email for '%s', from '%s', content length %i",
         to_addresses,
         parsed_url.username,
@@ -57,10 +63,10 @@ def send_markdown_email(auth_url, markdown_content, subject, to_addresses):
     msg.attach(MIMEText(html_content, "html"))
 
     with smtplib.SMTP_SSL(parsed_url.hostname, parsed_url.port) as server:
-        logger.info("Sending email to %s", to_addresses)
+        log.info("Sending email to %s", to_addresses)
 
         login_result = server.login(parsed_url.username, parsed_url.password)
-        logger.info("Login result: %s", login_result)
+        log.info("Login result: %s", login_result)
         result = server.send_message(msg)
-        logger.info("Send result: %s", result)
+        log.info("Send result: %s", result)
         server.quit()
