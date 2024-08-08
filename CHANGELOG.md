@@ -1,3 +1,12 @@
+# [0.10.0](https://github.com/iloveitaly/todoist-digest/compare/v0.9.0...v0.10.0) (2024-08-08)
+
+
+### Features
+
+* omit-empty option added ([2b4ca85](https://github.com/iloveitaly/todoist-digest/commit/2b4ca85c5a5028964cc61f7ac8df0759698b68b6))
+
+
+
 # [0.9.0](https://github.com/iloveitaly/todoist-digest/compare/v0.8.2...v0.9.0) (2024-07-19)
 
 
@@ -39,15 +48,6 @@
 * support multiple projects in digest ([7a253ab](https://github.com/iloveitaly/todoist-digest/commit/7a253aba25b8b7d14ca96aafd832b7f814a6647d))
 * **template:** css styles ([85a9fa2](https://github.com/iloveitaly/todoist-digest/commit/85a9fa2b41548a471ea52a0723af94787057da44))
 * **template:** finalized email template ([4d25885](https://github.com/iloveitaly/todoist-digest/commit/4d258850ed647d5feb559eab2ab6cf4299671699))
-
-
-
-# [0.7.0](https://github.com/iloveitaly/todoist-digest/compare/v0.6.1...v0.7.0) (2024-03-16)
-
-
-### Features
-
-* support multiple to emails ([e3913eb](https://github.com/iloveitaly/todoist-digest/commit/e3913eb1481bf1b0235af30837dc59acabab894e))
 
 
 
