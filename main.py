@@ -1,10 +1,11 @@
 import os
 from datetime import datetime, timedelta
 
+import click
 from apscheduler.schedulers.background import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 
-from todoist_digest import main
+from todoist_digest import cli
 
 last_synced = None
 
@@ -18,13 +19,11 @@ def job():
 
     print(f"Running job with last_synced: {last_synced}")
 
-    main(
-        last_synced,
-        os.environ.get("TARGET_USER"),
-        os.environ.get("TARGET_PROJECT"),
-        os.environ.get("EMAIL_AUTH"),
-        os.environ.get("EMAIL_TO"),
-    )
+    # TODO this is terrible, but I couldn't figure out how to pass JUST the last_synced param
+    # https://stackoverflow.com/questions/48619517/call-a-click-command-from-code
+    os.environ["TODOIST_DIGEST_LAST_SYNCED"] = last_synced
+
+    cli()
 
     last_synced = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
 
@@ -34,6 +33,8 @@ def cron():
     last_synced = get_initial_start_date()
 
     schedule = os.environ.get("SCHEDULE", "0 6 * * *")
+
+    job()
 
     print(f"Running on schedule: {schedule}")
 

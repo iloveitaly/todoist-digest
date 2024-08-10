@@ -434,7 +434,7 @@ def main(last_synced, target_user, target_project, email_auth, email_to, omit_em
         )
 
 
-@click.command()
+@click.command(context_settings={"auto_envvar_prefix": "TODOIST_DIGEST"})
 @click.option("--last-synced", required=True, help="The last synced date")
 @click.option("--target-user", required=True, help="The target user")
 @click.option("--target-project", required=True, help="The target project")

@@ -45,7 +45,8 @@ def send_markdown_email(auth_url, markdown_content, subject, to_addresses):
     html_content = process_markdown(markdown_content, subject)
 
     msg = MIMEMultipart()
-    msg["From"] = os.environ.get("EMAIL_FROM", parsed_url.username)
+    # TODO should be passed down
+    msg["From"] = os.environ.get("TODOIST_DIGEST_EMAIL_FROM", parsed_url.username)
     msg["To"] = to_addresses
     msg["Subject"] = subject
 
