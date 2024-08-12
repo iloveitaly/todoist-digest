@@ -34,8 +34,6 @@ def cron():
 
     schedule = os.environ.get("SCHEDULE", "0 6 * * *")
 
-    job()
-
     print(f"Running on schedule: {schedule}")
 
     scheduler = BlockingScheduler()
