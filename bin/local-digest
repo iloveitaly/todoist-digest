@@ -17,14 +17,7 @@ else
   fi
 fi
 
-TARGET_USER=$TARGET_USER
-
 # assumes we are already in the poetry env
-todoist-digest \
-  --last-synced $LAST_SYNC \
-  --target-user $TARGET_USER \
-  --target-project $TARGET_PROJECT \
-  --email-auth $EMAIL_AUTH \
-  --email-to $EMAIL_TO
+todoist-digest --last-synced $LAST_SYNC
 
 date -u +"%Y-%m-%dT%H:%M:%SZ" > last_sync
