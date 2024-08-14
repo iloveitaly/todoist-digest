@@ -1,5 +1,5 @@
 services:
-  todoist-digest-genny:
+  todoist-digest:
     image: ghcr.io/iloveitaly/todoist-digest:latest
     restart: always
     env_file:
