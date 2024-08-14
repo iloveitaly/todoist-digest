@@ -5,18 +5,18 @@ _targeting user {{ target_user }}_
 ## Comments
 {% for task_with_comments in comments %}
   {% set task = task_with_comments %}
-  {% include "task.jinja" with context %}
-  {% for comment in task_with_comments.comments %}
-    _{{ comment["posted_at_date"].strftime("%m/%d") }}_: {{ comment["content"] }}
+{% include "task.jinja" with context %}
+  {% for comment in task_with_comments['comments'] %}
+_{{ comment["posted_at_date"].strftime("%m/%d") }}_: {{ comment["content"] }}
     {% if not loop.last %}
 
-    ---
-    
+---
+
     {% endif %}
   {% endfor %}
 {% endfor %}
 {% elif not omit_empty %}
-  *No comments*
+*No comments*
 {% endif %}
 {% if new_tasks %}
 ## Added Tasks
@@ -24,14 +24,14 @@ _targeting user {{ target_user }}_
   {% include "task.jinja" with context %}
 {% endfor %}
 {% elif not omit_empty %}
-  *No new tasks*
+*No new tasks*
 {% endif %}
 {% if completed_tasks %}
-  ## Completed Tasks
-  {% for task in completed_tasks %}
-    {% include "task.jinja" with context %}
-  {% endfor %}
+## Completed Tasks
+{% for task in completed_tasks %}
+{% include "task.jinja" with context %}
+{% endfor %}
 {% elif not omit_empty %}
-  *No completed tasks*
+*No completed tasks*
 {% endif %}
 {% endif %}

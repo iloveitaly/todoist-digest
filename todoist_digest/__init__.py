@@ -1,17 +1,13 @@
+import todoist_digest.patch as _  # isort: split
+
 import funcy_pipe as fp
-
-from .patch import patch_todoist_api
-
-patch_todoist_api()  # isort: split
 
 # extend funcy with all of the helpful additions I like :)
 fp.patch()  # isort: split
 
 import datetime
-import logging
 import os
 import re
-import sys
 from functools import lru_cache
 
 import click

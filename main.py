@@ -1,13 +1,23 @@
 import os
 import datetime
 
-import click
 from apscheduler.schedulers.background import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 from todoist_digest import cli
 
 last_synced = None
+
+
+def handle_click_exit(func):
+    def wrapper(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except SystemExit as e:
+            if e.code != 0:
+                raise
+
+    return wrapper
 
 
 def get_initial_start_date():
@@ -25,13 +35,14 @@ def job():
     # https://stackoverflow.com/questions/48619517/call-a-click-command-from-code
     os.environ["TODOIST_DIGEST_LAST_SYNCED"] = last_synced
 
-    cli()
+    handle_click_exit(cli)()
 
-    last_synced = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    last_synced = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def cron():
     global last_synced
+
     last_synced = get_initial_start_date()
 
     schedule = os.environ.get("SCHEDULE", "0 6 * * *")
