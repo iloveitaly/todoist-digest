@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timedelta
+import datetime
 
 import click
 from apscheduler.schedulers.background import BlockingScheduler
@@ -11,7 +11,9 @@ last_synced = None
 
 
 def get_initial_start_date():
-    return (datetime.utcnow() - timedelta(days=3)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return (datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=3)).strftime(
+        "%Y-%m-%dT%H:%M:%SZ"
+    )
 
 
 def job():
