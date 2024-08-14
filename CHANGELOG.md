@@ -1,3 +1,12 @@
+## [0.10.3](https://github.com/iloveitaly/todoist-digest/compare/v0.10.2...v0.10.3) (2024-08-14)
+
+
+### Bug Fixes
+
+* fix up formatting and click wrapping ([0d76e0f](https://github.com/iloveitaly/todoist-digest/commit/0d76e0f82b72dba8c8ab5dae828df8257f856e5d))
+
+
+
 ## [0.10.2](https://github.com/iloveitaly/todoist-digest/compare/v0.10.1...v0.10.2) (2024-08-14)
 
 
@@ -38,15 +47,6 @@
 ### Features
 
 * multi-arch docker build ([bddbd88](https://github.com/iloveitaly/todoist-digest/commit/bddbd8864217e1ff8c982d98e6b1f96a75e61dae))
-
-
-
-## [0.8.2](https://github.com/iloveitaly/todoist-digest/compare/v0.8.1...v0.8.2) (2024-04-08)
-
-
-### Bug Fixes
-
-* adding email backoff based on resend errors ([5c4e0ed](https://github.com/iloveitaly/todoist-digest/commit/5c4e0edc0a7b9d21c98bab81fb28ca7c7ebc551e))
 
 
 
