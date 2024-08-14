@@ -1,3 +1,19 @@
+## [0.10.2](https://github.com/iloveitaly/todoist-digest/compare/v0.10.1...v0.10.2) (2024-08-14)
+
+
+### Bug Fixes
+
+* add context to jinja templates ([112c258](https://github.com/iloveitaly/todoist-digest/commit/112c258a31136ef9efcb71d0acd054ddc9fd4521))
+* backoff based on rate limit response ([91004aa](https://github.com/iloveitaly/todoist-digest/commit/91004aabc15f5c87cd1f93998121d632617c9579))
+* bad jinja variable reference ([cef9069](https://github.com/iloveitaly/todoist-digest/commit/cef9069358d52decd9157eead6bbb484685b1fff))
+* don't run right away ([ac70783](https://github.com/iloveitaly/todoist-digest/commit/ac70783e9cdcd5001ef3762563420fe67746bfcc))
+* move more rendering into jinja template ([4c5aa2d](https://github.com/iloveitaly/todoist-digest/commit/4c5aa2daf1807c3a39bb5445993d4f43097f5c00))
+* patch first in playground ([ca0eef7](https://github.com/iloveitaly/todoist-digest/commit/ca0eef77df6046bf020453a7caf28c863ccc40ad))
+* remove ENV passing now that click does this for us ([35a29d4](https://github.com/iloveitaly/todoist-digest/commit/35a29d4cff905edcb5c172d4fdcbde0b6aacead1))
+* stop relative date deprecation warning ([288785c](https://github.com/iloveitaly/todoist-digest/commit/288785c42c40e54177501052ce93a8ca546fa525))
+
+
+
 ## [0.10.1](https://github.com/iloveitaly/todoist-digest/compare/v0.10.0...v0.10.1) (2024-08-10)
 
 
@@ -31,15 +47,6 @@
 ### Bug Fixes
 
 * adding email backoff based on resend errors ([5c4e0ed](https://github.com/iloveitaly/todoist-digest/commit/5c4e0edc0a7b9d21c98bab81fb28ca7c7ebc551e))
-
-
-
-## [0.8.1](https://github.com/iloveitaly/todoist-digest/compare/v0.8.0...v0.8.1) (2024-04-08)
-
-
-### Bug Fixes
-
-* more expansive retry policy ([5b0850c](https://github.com/iloveitaly/todoist-digest/commit/5b0850cc7653e4a35758956ec443c8d472df3650))
 
 
 
