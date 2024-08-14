@@ -2,15 +2,15 @@
 
 import os
 
+# TODO this does not autoreload, I wonder if there is a way to issue a custom hook
+# NOTE IMPORTANT! MUST GO FIRST
+import todoist_digest.patch as _
+
+from todoist_digest import *
+
 from todoist_api_python.api import TodoistAPI
 
-# TODO this does not autoreload, I wonder if there is a way to issue a custom hook
-from todoist_digest import *
-from todoist_digest.patch import patch_todoist_api
-
 start_keys = set(locals().keys())
-
-patch_todoist_api()
 
 api_key = os.getenv("TODOIST_API_KEY")
 assert api_key is not None
