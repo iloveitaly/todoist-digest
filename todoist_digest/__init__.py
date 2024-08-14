@@ -146,7 +146,7 @@ def generate_markdown_for_new_tasks(new_tasks: list) -> list[dict] | None:
     return render_nodes
 
 
-def generate_markdown_for_comments(
+def generate_render_nodes_for_comments(
     task_map, comments_by_task_id: dict
 ) -> list[dict] | None:
     if not comments_by_task_id:
@@ -165,12 +165,6 @@ def generate_markdown_for_comments(
 
             return comment | {"content": comment["attachment"].file_name}
 
-        def format_content(comment):
-            formatted_date = comment["posted_at_date"].strftime("%m/%d")
-            content = comment["content"]
-
-            return f"_{formatted_date}_: {content}"
-
         transformed_comments = (
             comments
             | fp.map(add_content_to_attachments)
@@ -178,10 +172,7 @@ def generate_markdown_for_comments(
                 lambda comment: comment
                 | {"content": strip_markdown_links(comment["content"])}
             )
-            # | fp.where_not(content='')
-            | fp.map(format_content)
-            # separate each comment with a line
-            | fp.str_join("\n\n---\n\n")
+            | fp.to_list()
         )
 
         render_nodes.append(
@@ -329,6 +320,7 @@ def project_digest(api, last_synced, target_user, projects, target_project_name_
         | fp.lmap(lambda task: api.get_comments(task_id=task.id))
         | fp.flatten()
         | fp.lmap(object_to_dict)
+        # convert string date to actual datetime
         | fp.lmap(fp.partial(enrich_date, key="posted_at"))
         # no date filter is applied by default, we don't want all comments
         | fp.lfilter(lambda comment: comment["posted_at_date"] > last_synced)
@@ -372,7 +364,7 @@ def project_digest(api, last_synced, target_user, projects, target_project_name_
     return {
         "project_id": target_project_id,
         "project_name": target_project_name,
-        "comments": generate_markdown_for_comments(task_map, comments),
+        "comments": generate_render_nodes_for_comments(task_map, comments),
         "new_tasks": generate_markdown_for_new_tasks(new_tasks),
         "completed_tasks": generate_markdown_for_completed_tasks(
             filtered_completed_tasks
