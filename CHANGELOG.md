@@ -1,3 +1,12 @@
+## [0.10.4](https://github.com/iloveitaly/todoist-digest/compare/v0.10.3...v0.10.4) (2024-08-14)
+
+
+### Bug Fixes
+
+* spacing fix ([586d422](https://github.com/iloveitaly/todoist-digest/commit/586d42266eb36ad441a2531933510ae2148d6eb8))
+
+
+
 ## [0.10.3](https://github.com/iloveitaly/todoist-digest/compare/v0.10.2...v0.10.3) (2024-08-14)
 
 
@@ -38,15 +47,6 @@
 ### Features
 
 * omit-empty option added ([2b4ca85](https://github.com/iloveitaly/todoist-digest/commit/2b4ca85c5a5028964cc61f7ac8df0759698b68b6))
-
-
-
-# [0.9.0](https://github.com/iloveitaly/todoist-digest/compare/v0.8.2...v0.9.0) (2024-07-19)
-
-
-### Features
-
-* multi-arch docker build ([bddbd88](https://github.com/iloveitaly/todoist-digest/commit/bddbd8864217e1ff8c982d98e6b1f96a75e61dae))
 
 
 
