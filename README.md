@@ -46,6 +46,8 @@ Run this locally using:
 bin/local-digest-html
 ```
 
+If you need a tty, you can copy the `todoist-digest` execution line and run it manually in a shell.
+
 Or run directly:
 
 ```shell
@@ -68,24 +70,17 @@ poetry run todoist-digest \
 
 ## Development
 
+### Manual API Calls
+
+```
+http --auth-type bearer --auth $TODOIST_API_KEY https://api.todoist.com/rest/v2/projects 'Content-Type: application/json'
+```
+
 ### Docker Build
 
 This repo uses [nixpacks](https://nixpacks.com/docs/getting-started) for building a Dockerfile. Why? Because I like trying new things.
 
-Until [asdf support](https://github.com/railwayapp/nixpacks/pull/1026) is built into nixpacks, you'll have to do something like:
-
-```shell
-export NIXPACKS_POETRY_VERSION=$(asdf-current-version poetry)
-export NIXPACKS_PYTHON_VERSION=$(asdf-current-version python)
-```
-
-(asdf-current-version is a function [I have in my shell](https://github.com/iloveitaly/dotfiles/blob/d597a90cd84fb4c5c47efa78255e45a537f1155c/.functions#L17-L21) which returns the current version of a tool)
-
-In order to pass the py + poetry versions properly to nixpacks:
-
-```shell
-nixpacks build . --name todoist-digest --env NIXPACKS_PYTHON_VERSION --env NIXPACKS_POETRY_VERSION --start-cmd bin/cron-digest
-```
+[Asdf support](https://github.com/railwayapp/nixpacks/pull/1026) is built into nixpacks, so it will automatically pick up python and poetry versions.
 
 ### Playground
 
