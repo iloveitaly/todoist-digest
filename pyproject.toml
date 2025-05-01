@@ -9,7 +9,7 @@ keywords = ["todoist", "digest", "task", "management"]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-todoist-api-python = "^2.1.5"
+todoist-api-python = ">=2.1.5,<4.0.0"
 click = "^8.1.7"
 pyjson5 = "^1.6.6"
 funcy-pipe = "^0.11.0"
