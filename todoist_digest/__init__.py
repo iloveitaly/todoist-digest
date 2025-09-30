@@ -16,6 +16,7 @@ from dateutil import parser
 from todoist_api_python.api import TodoistAPI
 from todoist_api_python.models import Section
 from whatever import that
+from whenever import Instant
 
 from .email import send_markdown_email
 from .templates import render_template
@@ -34,12 +35,12 @@ from .util import TEMPLATES_DIRECTORY, log
 @lru_cache(maxsize=None)
 def section_map(api: TodoistAPI) -> dict[int, Section]:
     # TODO should probably filter by project_id
-    sections = api.get_sections()
+    sections = api.get_sections(limit=200) | fp.lflatten()
 
     # TODO this api response does not seem to page
     # assert sections.has_more is False
 
-    return sections | fp.group_by(f.compose(int, that.project_id))
+    return sections | fp.group_by(that.project_id)
 
 
 @lru_cache(maxsize=None)
@@ -57,58 +58,25 @@ def enrich_completed_tasks(api, task):
     completed_activity = todoist_get_completed_activity(api, task["id"])
 
     # there can be multiple completed events, I'm guessing if people complete > uncomplete > complete a task
-    if len(completed_activity["events"]) != 1:
-        # raise Exception("Expected exactly one completion activity")
+    if len(completed_activity["results"]) != 1:
+        log.warning(
+            "Expected exactly one completion activity, got multiple",
+            count=len(completed_activity["events"]),
+            task_id=task["id"],
+        )
         pass
 
-    if len(completed_activity["events"]) == 0:
+    if len(completed_activity["results"]) == 0:
         log.warning("Expected at least one completion activity")
         return task | {"initiator_id": None}
 
-    event = completed_activity["events"][0]
+    event = completed_activity["results"][0]
 
     return task | {"initiator_id": event["initiator_id"]}
 
 
-def enrich_comment(comment):
-    """
-    main goal is to add the posted_by_user_id to the comment
-    so we can figure out who posted this
-    """
-
-    api = get_api()
-    task_id = comment["task_id"]
-    task_info = todoist_get_item_info(api, task_id)
-    task_comments = task_info["notes"]
-
-    # TODO there's got to be a better way to do this with funcy
-    # find the comment in the task comments
-    matching_comments = [
-        task_comment
-        for task_comment in task_comments
-        if task_comment["id"] == comment["id"]
-    ]
-
-    if len(matching_comments) != 1:
-        raise Exception("Expected to find exactly one matching comment")
-
-    task_comment = matching_comments[0]
-    return comment | {"posted_by_user_id": task_comment["posted_uid"]}
-
-
-def parse_todoist_date(date_string):
-    return datetime.datetime.fromisoformat(date_string.replace("Z", "+00:00"))
-
-
 def object_to_dict(obj):
     return obj.__dict__
-
-
-def enrich_date(comment, key):
-    """
-    Convert posted at date to a datetime object
-    """
-    return comment | {f"{key}_date": parse_todoist_date(comment[key])}
 
 
 def strip_markdown_links(task_content):
@@ -209,47 +177,23 @@ def get_api():
 # https://developer.todoist.com/sync/v9/#get-archived-sections
 def get_completed_tasks(api: TodoistAPI, project_id):
     """
-    you have to iterate over all sections in a project to get all completed tasks
+    The todoist API is such a dumpster fire:
 
-    data structure:
-
-        'completed_info',
-        'from_dict',
-        'has_more',
-        'items',
-        'next_cursor',
-        'total'
+    - can only pull last 30d
+    - cannot filter by project ID, but have name
+    - requires UTZ timezones otherwise you'll get incorrect data
+    - returns a iterator of lists
     """
 
-    # combine all projects and subsections into a single list with params that correspond to the API params required
-    projects_and_sections = [
-        {"section_id": section_id}
-        for section_id in section_map(api)[int(project_id)] | fp.lmap(that.id)
-    ] + [{"project_id": project_id}]
-
-    def get_all_completed_items(original_params: dict):
-        params = original_params.copy()
-        results = []
-
-        while True:
-            # 100 is the limit for this particular completed items endpoint, the REST API allows for max of 200 :/
-            # https://github.com/Suor/funcy/issues/148
-            response = api.get_completed_items(**(params | {"limit": 100}))
-            results.append(response.items)
-
-            if not response.has_more:
-                break
-
-            params["cursor"] = response.next_cursor
-
-        return f.flatten(results)
-
-    # TODO could be neat if there was some sort of kwargs partial here
+    project = api.get_project(project_id)
     return (
-        projects_and_sections
-        | fp.lmap(get_all_completed_items)
-        | fp.flatten()
-        | fp.to_list()
+        api.get_completed_tasks_by_completion_date(
+            since=Instant.now().add(hours=-30 * 24).py_datetime(),
+            until=Instant.now().to_fixed_offset().py_datetime(),
+            filter_query=f"#{project.name}",
+            limit=200,
+        )
+        | fp.lflatten()
     )
 
 
@@ -278,7 +222,7 @@ def project_digest(api, last_synced, target_user, projects, target_project_name_
     completed_tasks = get_completed_tasks(api, target_project_id)
 
     log.info(f"getting tasks {target_project_name}")
-    tasks = api.get_tasks(project_id=target_project_id)
+    tasks = api.get_tasks(project_id=target_project_id) | fp.lflatten()
 
     all_tasks = tasks + completed_tasks
 
@@ -316,15 +260,11 @@ def project_digest(api, last_synced, target_user, projects, target_project_name_
         | fp.lmap(lambda task: api.get_comments(task_id=task.id))
         | fp.flatten()
         | fp.lmap(object_to_dict)
-        # convert string date to actual datetime
-        | fp.lmap(fp.partial(enrich_date, key="posted_at"))
         # no date filter is applied by default, we don't want all comments
-        | fp.lfilter(lambda comment: comment["posted_at_date"] > last_synced)
-        # comments do not come with who created the comment by default, we need to hit a separate API to add this to the comment
-        | fp.lmap(enrich_comment)
+        | fp.lfilter(lambda comment: comment["posted_at"] > last_synced)
         # only select the comments posted by our target user
-        | fp.where(posted_by_user_id=filter_user_id)
-        | fp.sort(key="posted_at_date")
+        | fp.where(posted_at=filter_user_id)
+        | fp.sort(key="posted_at")
         # group by task
         | fp.group_by(lambda comment: comment["task_id"])
     )
@@ -333,8 +273,9 @@ def project_digest(api, last_synced, target_user, projects, target_project_name_
         completed_tasks
         # old tasks drop the completed_at field
         | fp.where_not_attr(completed_at=None)
-        | fp.lfilter(lambda task: parse_todoist_date(task.completed_at) > last_synced)
+        | fp.lfilter(lambda task: task.completed_at > last_synced)
         | fp.lmap(object_to_dict)
+        # enrichment to get the initiator_id
         | fp.lmap(f.partial(enrich_completed_tasks, api))
         | fp.where(initiator_id=filter_user_id)
         | fp.to_list()
@@ -349,12 +290,12 @@ def project_digest(api, last_synced, target_user, projects, target_project_name_
     )
 
     new_tasks = (
-        api.get_tasks(filter=todoist_new_task_filter)
+        api.filter_tasks(query=todoist_new_task_filter, limit=200)
+        | fp.flatten()
         | fp.lmap(object_to_dict)
         | fp.where(creator_id=filter_user_id, parent_id=None)
         # exclude any tasks which are already reported in the comments
-        | fp.filter(lambda task: task["id"] not in comments.keys())
-        | fp.to_list()
+        | fp.lfilter(lambda task: task["id"] not in comments.keys())
     )
 
     return {
@@ -370,26 +311,20 @@ def project_digest(api, last_synced, target_user, projects, target_project_name_
 
 def main(last_synced, target_user, target_project, email_auth, email_to, omit_empty):
     api = get_api()
-    projects = api.get_projects()
+    projects = api.get_projects() | fp.lflatten()
     last_synced_date = parser.parse(last_synced)
 
     # allow multiple projects to be passed in via a comma separated list
     if "," in target_project:
-        target_projects = target_project.split(",") | fp.map(str.strip)
+        target_projects = target_project.split(",") | fp.map(str.strip) | fp.compact()
     else:
         target_projects = [target_project]
 
-    project_digests = (
-        target_projects
-        | fp.map(
-            fp.partial(project_digest, api, last_synced_date, target_user, projects)
-        )
-        | fp.to_list()
+    project_digests = target_projects | fp.lmap(
+        fp.partial(project_digest, api, last_synced_date, target_user, projects)
     )
 
-    formatted_project_header = ", ".join(
-        project_digests | fp.pluck("project_name") | fp.to_list()
-    )
+    formatted_project_header = ", ".join(project_digests | fp.lpluck("project_name"))
 
     def render_digest(digest):
         return render_template(

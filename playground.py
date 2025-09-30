@@ -1,14 +1,14 @@
 #!/usr/bin/env -S ipython -i
 
 import os
+from operator import itemgetter
+
+from todoist_api_python.api import TodoistAPI
 
 # TODO this does not autoreload, I wonder if there is a way to issue a custom hook
 # NOTE IMPORTANT! MUST GO FIRST
 import todoist_digest.patch as _
-
 from todoist_digest import *
-
-from todoist_api_python.api import TodoistAPI
 
 start_keys = set(locals().keys())
 

@@ -2,7 +2,7 @@ import logging
 
 import backoff
 import requests
-import todoist_api_python.http_requests
+import todoist_api_python._core.http_requests
 
 # backoff does not log by default
 logging.getLogger("backoff").addHandler(logging.StreamHandler())
@@ -17,10 +17,10 @@ def patch_todoist_api():
     patch_targets = ["delete", "get", "json", "post"]
 
     for target in patch_targets:
-        original_function = getattr(todoist_api_python.http_requests, target)
+        original_function = getattr(todoist_api_python._core.http_requests, target)
 
         setattr(
-            todoist_api_python.http_requests,
+            todoist_api_python._core.http_requests,
             f"original_{target}",
             original_function,
         )
@@ -63,7 +63,7 @@ def patch_todoist_api():
         )(patched_function)
 
         setattr(
-            todoist_api_python.http_requests,
+            todoist_api_python._core.http_requests,
             target,
             patched_function2,
         )

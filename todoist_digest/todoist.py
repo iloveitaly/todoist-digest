@@ -11,10 +11,10 @@ def todoist_get_sync_resource(api, resource_type):
     >>> todoist_get_sync_resource(api, "collaborators")
     """
 
-    from todoist_api_python.endpoints import get_sync_url
-    from todoist_api_python.http_requests import post
+    from todoist_api_python._core.endpoints import get_api_url
+    from todoist_api_python._core.http_requests import post
 
-    endpoint = get_sync_url("sync")
+    endpoint = get_api_url("sync")
     data = {
         "resource_types": [resource_type],
         "sync_token": "*",
@@ -27,10 +27,10 @@ def todoist_get_sync_resource(api, resource_type):
 # https://github.com/iloveitaly/todoist-api-python/commit/ec83531fae94a2ccd0a4bd6b2d1db95d86b129b6
 @lru_cache(maxsize=None)
 def todoist_get_item_info(api, item_id):
-    from todoist_api_python.endpoints import get_sync_url
-    from todoist_api_python.http_requests import get
+    from todoist_api_python._core.endpoints import get_api_url
+    from todoist_api_python._core.http_requests import get
 
-    endpoint = get_sync_url("items/get")
+    endpoint = get_api_url("items/get")
     data = {
         "item_id": item_id,
     }
@@ -39,10 +39,10 @@ def todoist_get_item_info(api, item_id):
 
 
 def todoist_get_completed_activity(api, task_id):
-    from todoist_api_python.endpoints import get_sync_url
-    from todoist_api_python.http_requests import get
+    from todoist_api_python._core.endpoints import get_api_url
+    from todoist_api_python._core.http_requests import get
 
-    endpoint = get_sync_url("activity/get")
+    endpoint = get_api_url("activities")
     data = {
         "limit": 100,
         "event_type": "completed",
