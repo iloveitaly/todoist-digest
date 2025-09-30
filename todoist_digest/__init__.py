@@ -263,7 +263,7 @@ def project_digest(api, last_synced, target_user, projects, target_project_name_
         # no date filter is applied by default, we don't want all comments
         | fp.lfilter(lambda comment: comment["posted_at"] > last_synced)
         # only select the comments posted by our target user
-        | fp.where(posted_at=filter_user_id)
+        | fp.where(poster_id=filter_user_id)
         | fp.sort(key="posted_at")
         # group by task
         | fp.group_by(lambda comment: comment["task_id"])
