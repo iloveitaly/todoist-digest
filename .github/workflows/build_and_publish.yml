@@ -23,34 +23,14 @@ jobs:
     name: Docker Build and Push
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: ASDF Parse
-        uses: kota65535/github-asdf-parse-action@v2.0.0
-        id: versions
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "${{ steps.versions.outputs.python }}"
-
-      - name: Install Poetry
-        uses: Gr1N/setup-poetry@v9
-        with:
-          poetry-version: "${{ steps.versions.outputs.poetry }}"
-
-      - name: Install dependencies
-        run: |
-          poetry install
+      - uses: actions/checkout@v5
+      - uses: jdx/mise-action@v3
+      - run: uv sync
 
       - name: Make sure it runs
-        run: |
-          poetry run ${{ github.event.repository.name }} --help
+        run: uv run ${{ github.event.repository.name }} --help
 
-      - name: Poetry Check
-        run: |
-          poetry check --lock
+      - run: uv check --lock
 
       - name: Conventional Changelog Action
         id: changelog
@@ -58,21 +38,18 @@ jobs:
         with:
           github-token: ${{ secrets.github_token }}
           version-file: "./pyproject.toml"
-          version-path: "tool.poetry.version"
+          version-path: "project.version"
           fallback-version: "0.1.0"
           output-file: "CHANGELOG.md"
 
       # NOTE must run after versioning otherwise the right version won't be pushed
       - name: Build distribution package
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
-        run: |
-          poetry build
+        run: uv build
 
       - name: Publish to PyPI
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
-        run: |
-          # `gh secret set PYPI_API_TOKEN --app actions --body $PYPI_API_TOKEN`
-          poetry publish -u __token__ -p ${{ secrets.PYPI_API_TOKEN }}
+        run: uv publish
 
       - name: Github Release
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
