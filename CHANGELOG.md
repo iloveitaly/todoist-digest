@@ -1,3 +1,14 @@
+## [0.10.5](https://github.com/iloveitaly/todoist-digest/compare/v0.10.4...v0.10.5) (2025-09-30)
+
+
+### Bug Fixes
+
+* migrate github workflow from poetry to uv and mise ([6ab75e8](https://github.com/iloveitaly/todoist-digest/commit/6ab75e8c1445c9904136401d5e0ddd0a6d6789ef))
+* use correct comment attribute for filtering and display ([bc6609e](https://github.com/iloveitaly/todoist-digest/commit/bc6609e0a4ddb29181441e019b5cecc1b2206219))
+* works with new todoist api ([c0fb2ad](https://github.com/iloveitaly/todoist-digest/commit/c0fb2ad823ce6df874b57118901dd06d9765017c))
+
+
+
 ## [0.10.4](https://github.com/iloveitaly/todoist-digest/compare/v0.10.3...v0.10.4) (2024-08-14)
 
 
@@ -38,15 +49,6 @@
 ### Bug Fixes
 
 * allow all options to be configured from env ([89916ab](https://github.com/iloveitaly/todoist-digest/commit/89916ab524c93241649bc14b10f104fe725f4019))
-
-
-
-# [0.10.0](https://github.com/iloveitaly/todoist-digest/compare/v0.9.0...v0.10.0) (2024-08-08)
-
-
-### Features
-
-* omit-empty option added ([2b4ca85](https://github.com/iloveitaly/todoist-digest/commit/2b4ca85c5a5028964cc61f7ac8df0759698b68b6))
 
 
 
