@@ -1632,7 +1632,7 @@ wheels = [
 
 [[package]]
 name = "todoist-digest"
-version = "0.10.4"
+version = "0.10.5"
 source = { editable = "." }
 dependencies = [
     { name = "apscheduler" },

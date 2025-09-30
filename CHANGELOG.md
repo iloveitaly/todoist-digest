@@ -1,3 +1,12 @@
+## [0.10.6](https://github.com/iloveitaly/todoist-digest/compare/v0.10.5...v0.10.6) (2025-09-30)
+
+
+### Bug Fixes
+
+* fix docker build ([2496296](https://github.com/iloveitaly/todoist-digest/commit/24962961779d5b98d5fd1cada3b81cc27be5bcb5))
+
+
+
 ## [0.10.5](https://github.com/iloveitaly/todoist-digest/compare/v0.10.4...v0.10.5) (2025-09-30)
 
 
@@ -40,15 +49,6 @@
 * patch first in playground ([ca0eef7](https://github.com/iloveitaly/todoist-digest/commit/ca0eef77df6046bf020453a7caf28c863ccc40ad))
 * remove ENV passing now that click does this for us ([35a29d4](https://github.com/iloveitaly/todoist-digest/commit/35a29d4cff905edcb5c172d4fdcbde0b6aacead1))
 * stop relative date deprecation warning ([288785c](https://github.com/iloveitaly/todoist-digest/commit/288785c42c40e54177501052ce93a8ca546fa525))
-
-
-
-## [0.10.1](https://github.com/iloveitaly/todoist-digest/compare/v0.10.0...v0.10.1) (2024-08-10)
-
-
-### Bug Fixes
-
-* allow all options to be configured from env ([89916ab](https://github.com/iloveitaly/todoist-digest/commit/89916ab524c93241649bc14b10f104fe725f4019))
 
 
 
