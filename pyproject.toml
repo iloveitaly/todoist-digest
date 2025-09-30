@@ -1,43 +1,41 @@
-[tool.poetry]
+[project]
 name = "todoist-digest"
 version = "0.10.4"
 description = "Generate a digest of comments that occured since the last checked in date. Useful for including in an email."
-authors = ["Michael Bianco <mike@mikebian.co>"]
+requires-python = ">=3.11"
+authors = [{ name = "Michael Bianco", email = "mike@mikebian.co" }]
 license = "MIT"
 readme = "README.md"
 keywords = ["todoist", "digest", "task", "management"]
+dependencies = [
+    "apscheduler == 3.11.0",
+    "backoff == 2.2.1",
+    "click == 8.2.1",
+    "css-inline == 0.17.0",
+    "funcy-pipe == 0.11.1",
+    "jinja2 == 3.1.6",
+    "markdown2 == 2.5.4",
+    "pyjson5 == 1.6.9",
+    "python-dateutil == 2.9.0.post0",
+    "python-decouple-typed == 3.11.0",
+    "structlog == 25.4.0",
+    "todoist-api-python == 3.1.0",
+    "whatever == 0.7",
+]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-todoist-api-python = ">=2.1.5,<4.0.0"
-click = "^8.1.7"
-pyjson5 = "^1.6.6"
-funcy-pipe = "^0.11.0"
-# funcy-pipe = { develop = true, path = "../../python/funcy-pipe" }
-python-dateutil = "^2.9.0.post0"
-backoff = "^2.2.1"
-markdown2 = "^2.5.0"
-whatever = "^0.7"
-apscheduler = "^3.10.4"
-css-inline = ">=0.14.1,<0.18.0"
-jinja2 = "^3.1.4"
-structlog = ">=24.4,<26.0"
-python-decouple-typed = "^3.11.0"
+[project.scripts]
+todoist-digest = "todoist_digest:cli"
 
-[tool.poetry.group.dev.dependencies]
-isort = "6.0.1"
-black = ">=24.8,<26.0"
-pylint = "^3.2.6"
-pyright = "^1.1.374"
-mypy = "^1.11.1"
+[dependency-groups]
+dev = [
+    "pyright == 1.1.403",
+    "ruff>=0.13.2",
+]
 
-[tool.isort]
-profile = "black"
-float_to_top = true
+[tool.uv.build-backend]
+# avoids the src/ directory structure
+module-root = ""
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.scripts]
-todoist-digest = "todoist_digest:cli"
+requires = ["uv_build>=0.8.11,<0.9.0"]
+build-backend = "uv_build"
