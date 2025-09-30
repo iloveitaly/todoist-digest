@@ -13,3 +13,9 @@
 - [ ] separate each project with whitespace
 - [ ] name in logo
 - [ ] transparent logo
+
+## Jinja
+
+- [ ] linting
+- [ ] syntax highlighting
+- [ ] remove indendentation? for markdown?
