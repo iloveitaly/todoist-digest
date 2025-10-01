@@ -12,7 +12,7 @@ on:
 # id token is required for OIDC authentication (e.g. with GHCR)
 permissions:
   id-token: write
-  contents: read
+  contents: write
 
 env:
   PIP_DEFAULT_TIMEOUT: 60
