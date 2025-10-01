@@ -1,3 +1,13 @@
+## [0.10.7](https://github.com/iloveitaly/todoist-digest/compare/v0.10.6...v0.10.7) (2025-10-01)
+
+
+### Bug Fixes
+
+* oidc auth ([f21e319](https://github.com/iloveitaly/todoist-digest/commit/f21e3194d13a768060c92bc9d23dc8c933d60f40))
+* wrong permissions on ci ([e9ba61c](https://github.com/iloveitaly/todoist-digest/commit/e9ba61c61f5b1f7759f95622b60507e496ac0b92))
+
+
+
 ## [0.10.6](https://github.com/iloveitaly/todoist-digest/compare/v0.10.5...v0.10.6) (2025-09-30)
 
 
@@ -33,22 +43,6 @@
 ### Bug Fixes
 
 * fix up formatting and click wrapping ([0d76e0f](https://github.com/iloveitaly/todoist-digest/commit/0d76e0f82b72dba8c8ab5dae828df8257f856e5d))
-
-
-
-## [0.10.2](https://github.com/iloveitaly/todoist-digest/compare/v0.10.1...v0.10.2) (2024-08-14)
-
-
-### Bug Fixes
-
-* add context to jinja templates ([112c258](https://github.com/iloveitaly/todoist-digest/commit/112c258a31136ef9efcb71d0acd054ddc9fd4521))
-* backoff based on rate limit response ([91004aa](https://github.com/iloveitaly/todoist-digest/commit/91004aabc15f5c87cd1f93998121d632617c9579))
-* bad jinja variable reference ([cef9069](https://github.com/iloveitaly/todoist-digest/commit/cef9069358d52decd9157eead6bbb484685b1fff))
-* don't run right away ([ac70783](https://github.com/iloveitaly/todoist-digest/commit/ac70783e9cdcd5001ef3762563420fe67746bfcc))
-* move more rendering into jinja template ([4c5aa2d](https://github.com/iloveitaly/todoist-digest/commit/4c5aa2daf1807c3a39bb5445993d4f43097f5c00))
-* patch first in playground ([ca0eef7](https://github.com/iloveitaly/todoist-digest/commit/ca0eef77df6046bf020453a7caf28c863ccc40ad))
-* remove ENV passing now that click does this for us ([35a29d4](https://github.com/iloveitaly/todoist-digest/commit/35a29d4cff905edcb5c172d4fdcbde0b6aacead1))
-* stop relative date deprecation warning ([288785c](https://github.com/iloveitaly/todoist-digest/commit/288785c42c40e54177501052ce93a8ca546fa525))
 
 
 

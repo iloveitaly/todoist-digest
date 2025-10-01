@@ -1,6 +1,6 @@
 [project]
 name = "todoist-digest"
-version = "0.10.6"
+version = "0.10.7"
 description = "Generate a digest of comments that occured since the last checked in date. Useful for including in an email."
 requires-python = ">=3.11"
 authors = [{ name = "Michael Bianco", email = "mike@mikebian.co" }]
