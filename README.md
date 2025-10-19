@@ -51,7 +51,7 @@ If you need a tty, you can copy the `todoist-digest` execution line and run it m
 Or run directly:
 
 ```shell
-poetry run todoist-digest \
+uv run todoist-digest \
   --last-synced "2023-12-04T15:52:48Z" \
   --target-user user@gmail.com \
   --target-project ProjectName
@@ -60,7 +60,7 @@ poetry run todoist-digest \
 Or, email yourself the digest:
 
 ```shell
-poetry run todoist-digest \
+uv run todoist-digest \
   --last-synced $LAST_SYNC \
   --target-user $TARGET_USER \
   --target-project $TARGET_PROJECT \
@@ -80,7 +80,7 @@ http --auth-type bearer --auth $TODOIST_API_KEY https://api.todoist.com/rest/v2/
 
 This repo uses [nixpacks](https://nixpacks.com/docs/getting-started) for building a Dockerfile. Why? Because I like trying new things.
 
-[Asdf support](https://github.com/railwayapp/nixpacks/pull/1026) is built into nixpacks, so it will automatically pick up python and poetry versions.
+[Asdf support](https://github.com/railwayapp/nixpacks/pull/1026) is built into nixpacks, so it will automatically pick up python and uv versions.
 
 ### Playground
 
