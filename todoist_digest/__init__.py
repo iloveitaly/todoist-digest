@@ -60,11 +60,10 @@ def enrich_completed_tasks(api, task):
     # there can be multiple completed events, I'm guessing if people complete > uncomplete > complete a task
     if len(completed_activity["results"]) != 1:
         log.warning(
-            "Expected exactly one completion activity, got multiple",
-            count=len(completed_activity["events"]),
+            "expected exactly one completion activity, got multiple, first one will be picked",
+            count=len(completed_activity["results"]),
             task_id=task["id"],
         )
-        pass
 
     if len(completed_activity["results"]) == 0:
         log.warning("Expected at least one completion activity")
