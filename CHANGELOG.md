@@ -1,3 +1,12 @@
+## [0.10.8](https://github.com/iloveitaly/todoist-digest/compare/v0.10.7...v0.10.8) (2025-10-19)
+
+
+### Bug Fixes
+
+* bad key reference ([d1a85a0](https://github.com/iloveitaly/todoist-digest/commit/d1a85a0e96433298c7f5dcd408a61ea6e0d97595))
+
+
+
 ## [0.10.7](https://github.com/iloveitaly/todoist-digest/compare/v0.10.6...v0.10.7) (2025-10-01)
 
 
@@ -34,15 +43,6 @@
 ### Bug Fixes
 
 * spacing fix ([586d422](https://github.com/iloveitaly/todoist-digest/commit/586d42266eb36ad441a2531933510ae2148d6eb8))
-
-
-
-## [0.10.3](https://github.com/iloveitaly/todoist-digest/compare/v0.10.2...v0.10.3) (2024-08-14)
-
-
-### Bug Fixes
-
-* fix up formatting and click wrapping ([0d76e0f](https://github.com/iloveitaly/todoist-digest/commit/0d76e0f82b72dba8c8ab5dae828df8257f856e5d))
 
 
 
