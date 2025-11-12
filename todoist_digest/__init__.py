@@ -344,6 +344,16 @@ def main(last_synced, target_user, target_project, email_auth, email_to, omit_em
 
     log.debug("generated project markdown", markdown=markdown)
 
+    # Check if there are any updates across all project digests
+    has_updates = any(
+        digest["comments"] or digest["new_tasks"] or digest["completed_tasks"]
+        for digest in project_digests
+    )
+
+    if not has_updates:
+        log.info("No updates to report, skipping email")
+        return
+
     if email_auth:
         now_time_formatted = datetime.datetime.now().strftime("%m/%d")
         last_synced_date_formatted = last_synced_date.strftime("%m/%d")
