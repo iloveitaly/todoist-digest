@@ -111,8 +111,13 @@ def todoist_task_link(task_id, task_content):
     return f"https://app.todoist.com/app/task/{slug}-{task_id}"
 
 
-def todoist_project_link(project_id):
-    return f"https://todoist.com/showProject?id={project_id}"
+def todoist_project_link(project_id, project_name):
+    """
+    Generate the new Todoist project URL format:
+    https://app.todoist.com/app/project/<project_slug>-<project_id>
+    """
+    slug = generate_task_slug(project_name)
+    return f"https://app.todoist.com/app/project/{slug}-{project_id}"
 
 
 def generate_markdown_for_new_tasks(new_tasks: list) -> list[dict] | None:
@@ -354,11 +359,11 @@ def main(last_synced, target_user, target_project, email_auth, email_to, omit_em
                 "target_user": target_user,
                 "project_name": digest["project_name"],
                 "project_id": digest["project_id"],
-                "project_link": todoist_project_link(digest["project_id"]),
+                "project_link": todoist_project_link(digest["project_id"], digest["project_name"]),
                 "comments": digest["comments"],
                 "new_tasks": digest["new_tasks"],
                 "completed_tasks": digest["completed_tasks"],
-            },
+            }
         )
 
     markdown = project_digests | fp.map(render_digest) | fp.join_str("\n")
