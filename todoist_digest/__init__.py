@@ -86,13 +86,13 @@ def strip_markdown_links(task_content):
     return re.sub(pattern, "\\1", task_content)
 
 
-def generate_task_slug(task_content):
+def generate_slug(text):
     """
-    Generate a URL slug from task content by replacing spaces with dashes 
+    Generate a URL slug from text by replacing spaces with dashes 
     and removing special characters
     """
     # Convert to lowercase and replace spaces with dashes
-    slug = task_content.lower().replace(" ", "-")
+    slug = text.lower().replace(" ", "-")
     # Remove special characters, keeping only alphanumeric and dashes
     slug = re.sub(r"[^a-z0-9-]", "", slug)
     # Remove multiple consecutive dashes
@@ -107,7 +107,7 @@ def todoist_task_link(task_id, task_content):
     Generate the new Todoist task URL format: 
     https://app.todoist.com/app/task/<slug>-<task_id>
     """
-    slug = generate_task_slug(task_content)
+    slug = generate_slug(task_content)
     return f"https://app.todoist.com/app/task/{slug}-{task_id}"
 
 
@@ -116,7 +116,7 @@ def todoist_project_link(project_id, project_name):
     Generate the new Todoist project URL format:
     https://app.todoist.com/app/project/<project_slug>-<project_id>
     """
-    slug = generate_task_slug(project_name)
+    slug = generate_slug(project_name)
     return f"https://app.todoist.com/app/project/{slug}-{project_id}"
 
 
