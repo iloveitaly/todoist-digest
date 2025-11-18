@@ -86,8 +86,29 @@ def strip_markdown_links(task_content):
     return re.sub(pattern, "\\1", task_content)
 
 
-def todoist_task_link(task_id):
-    return f"https://todoist.com/showTask?id={task_id}"
+def generate_task_slug(task_content):
+    """
+    Generate a URL slug from task content by replacing spaces with dashes 
+    and removing special characters
+    """
+    # Convert to lowercase and replace spaces with dashes
+    slug = task_content.lower().replace(" ", "-")
+    # Remove special characters, keeping only alphanumeric and dashes
+    slug = re.sub(r"[^a-z0-9-]", "", slug)
+    # Remove multiple consecutive dashes
+    slug = re.sub(r"-+", "-", slug)
+    # Strip leading/trailing dashes
+    slug = slug.strip("-")
+    return slug
+
+
+def todoist_task_link(task_id, task_content):
+    """
+    Generate the new Todoist task URL format: 
+    https://app.todoist.com/app/task/<slug>-<task_id>
+    """
+    slug = generate_task_slug(task_content)
+    return f"https://app.todoist.com/app/task/{slug}-{task_id}"
 
 
 def todoist_project_link(project_id):
@@ -103,7 +124,7 @@ def generate_markdown_for_new_tasks(new_tasks: list) -> list[dict] | None:
         task_content = strip_markdown_links(task["content"])
 
         render_nodes.append(
-            {"task_content": task_content, "task_link": todoist_task_link(task["id"])}
+            {"task_content": task_content, "task_link": todoist_task_link(task["id"], task_content)}
         )
 
     return render_nodes
@@ -141,7 +162,7 @@ def generate_render_nodes_for_comments(
         render_nodes.append(
             {
                 "task_content": task_content,
-                "task_link": todoist_task_link(task_id),
+                "task_link": todoist_task_link(task_id, task_content),
                 "comments": transformed_comments,
             }
         )
@@ -160,7 +181,7 @@ def generate_markdown_for_completed_tasks(completed_tasks: list) -> list[dict] |
         render_nodes.append(
             {
                 "task_content": task_content,
-                "task_link": todoist_task_link(task["id"]),
+                "task_link": todoist_task_link(task["id"], task_content),
             }
         )
 
