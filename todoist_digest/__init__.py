@@ -87,11 +87,11 @@ def strip_markdown_links(task_content):
 
 
 def todoist_task_link(task_id):
-    return f"https://todoist.com/showTask?id={task_id}"
+    return f"https://todoist.com/app/task/{task_id}"
 
 
 def todoist_project_link(project_id):
-    return f"https://todoist.com/showProject?id={project_id}"
+    return f"https://todoist.com/app/project/{project_id}"
 
 
 def generate_markdown_for_new_tasks(new_tasks: list) -> list[dict] | None:
@@ -225,6 +225,7 @@ def project_digest(api, last_synced, target_user, projects, target_project_name_
 
     all_tasks = tasks + completed_tasks
 
+    # TODO pretty sure this is out of date at this point
     """
     Task(assignee_id=None, assigner_id=None, comment_count=1, is_completed=False, content='look into car tax credit [Program | Energy Office](https://energyoffice.colorado.gov/program)', created_at='2023-10-05T17:13:23.912168Z', creator_id='creator_id', description='how long do i need to own the car? Can i stack the credits?', due=None, id='task_id', labels=[], order=-3, parent_id=None, priority=1, project_id='project_id', section_id='section_id', url='https://todoist.com/showTask?id=task_id', sync_id=None)
     """
