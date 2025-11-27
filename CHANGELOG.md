@@ -1,3 +1,12 @@
+## [0.11.1](https://github.com/iloveitaly/todoist-digest/compare/v0.11.0...v0.11.1) (2025-11-27)
+
+
+### Bug Fixes
+
+* update todoist task and project link formats for new URLs ([004a170](https://github.com/iloveitaly/todoist-digest/commit/004a17089833108fea792fa55a5167baad165a49))
+
+
+
 # [0.11.0](https://github.com/iloveitaly/todoist-digest/compare/v0.10.8...v0.11.0) (2025-11-12)
 
 
@@ -32,17 +41,6 @@
 ### Bug Fixes
 
 * fix docker build ([2496296](https://github.com/iloveitaly/todoist-digest/commit/24962961779d5b98d5fd1cada3b81cc27be5bcb5))
-
-
-
-## [0.10.5](https://github.com/iloveitaly/todoist-digest/compare/v0.10.4...v0.10.5) (2025-09-30)
-
-
-### Bug Fixes
-
-* migrate github workflow from poetry to uv and mise ([6ab75e8](https://github.com/iloveitaly/todoist-digest/commit/6ab75e8c1445c9904136401d5e0ddd0a6d6789ef))
-* use correct comment attribute for filtering and display ([bc6609e](https://github.com/iloveitaly/todoist-digest/commit/bc6609e0a4ddb29181441e019b5cecc1b2206219))
-* works with new todoist api ([c0fb2ad](https://github.com/iloveitaly/todoist-digest/commit/c0fb2ad823ce6df874b57118901dd06d9765017c))
 
 
 
