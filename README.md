@@ -57,6 +57,8 @@ uv run todoist-digest \
   --target-project ProjectName
 ```
 
+Quick tip: using raycast, you can quickly generate an ISO timestamp `2 days ago as iso`
+
 Or, email yourself the digest:
 
 ```shell
