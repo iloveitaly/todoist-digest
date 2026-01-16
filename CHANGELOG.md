@@ -1,3 +1,12 @@
+# [0.12.0](https://github.com/iloveitaly/todoist-digest/compare/v0.11.1...v0.12.0) (2026-01-16)
+
+
+### Features
+
+* auto-uncomplete tasks with comments after completion ([e17cede](https://github.com/iloveitaly/todoist-digest/commit/e17cede53a0edcfdb0f0c8921bb1a6423e97d37a))
+
+
+
 ## [0.11.1](https://github.com/iloveitaly/todoist-digest/compare/v0.11.0...v0.11.1) (2025-11-27)
 
 
@@ -32,15 +41,6 @@
 
 * oidc auth ([f21e319](https://github.com/iloveitaly/todoist-digest/commit/f21e3194d13a768060c92bc9d23dc8c933d60f40))
 * wrong permissions on ci ([e9ba61c](https://github.com/iloveitaly/todoist-digest/commit/e9ba61c61f5b1f7759f95622b60507e496ac0b92))
-
-
-
-## [0.10.6](https://github.com/iloveitaly/todoist-digest/compare/v0.10.5...v0.10.6) (2025-09-30)
-
-
-### Bug Fixes
-
-* fix docker build ([2496296](https://github.com/iloveitaly/todoist-digest/commit/24962961779d5b98d5fd1cada3b81cc27be5bcb5))
 
 
 
