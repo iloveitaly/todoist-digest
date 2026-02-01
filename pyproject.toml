@@ -60,7 +60,7 @@ debugging-extras = [
   "sqlparse>=0.5.3",
   "uv-development-toggle>=0.6.0",
 ]
-dev = ["pyright == 1.1.407", "ruff>=0.13.2"]
+dev = ["pyright == 1.1.408", "ruff>=0.13.2"]
 
 [tool.uv.build-backend]
 # avoids the src/ directory structure
