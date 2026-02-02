@@ -13,6 +13,8 @@ This project was also a good excuse to play around and test some functional prog
 * Can send an email digest if auth is provided
 * Retrieves comments on completed tasks
 * Target projects by ID or name
+* Optional heartbeat URL for uptime monitoring
+* Automatic internet connectivity checking with retry logic
 
 ## Usage
 
@@ -36,6 +38,28 @@ docker run -it ghcr.io/iloveitaly/todoist-digest:latest bash
 ```
 
 Or, just use the [docker compose file](docker-compose.yml).
+
+### Heartbeat Monitoring
+
+The digest supports heartbeat URLs for uptime monitoring services like [Healthchecks.io](https://healthchecks.io/), [UptimeRobot](https://uptimerobot.com/), or similar services. When configured, the digest will ping the heartbeat URL after each successful job execution.
+
+To enable heartbeat monitoring, set the `HEARTBEAT_URL` environment variable:
+
+```shell
+export HEARTBEAT_URL="https://hc-ping.com/your-unique-id"
+```
+
+Or in your `.env` file for Docker:
+
+```
+HEARTBEAT_URL=https://hc-ping.com/your-unique-id
+```
+
+The heartbeat ping happens automatically after each successful digest generation. If the ping fails, the error is silently ignored so it doesn't affect the digest execution.
+
+### Internet Connection Resilience
+
+The scheduled job includes automatic internet connectivity checking with exponential backoff retry logic (up to 8 hours). This ensures the digest runs successfully even if there are temporary network issues, such as overnight router disconnections.
 
 ### Locally
 
