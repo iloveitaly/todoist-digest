@@ -3,10 +3,14 @@ import datetime
 
 from apscheduler.schedulers.background import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
+from decouple import config
 
 from todoist_digest import cli
+from todoist_digest.internet import wait_for_internet_connection
 
 last_synced = None
+
+HEARTBEAT_URL = config("HEARTBEAT_URL", default=None)
 
 
 def handle_click_exit(func):
@@ -35,9 +39,19 @@ def job():
     # https://stackoverflow.com/questions/48619517/call-a-click-command-from-code
     os.environ["TODOIST_DIGEST_LAST_SYNCED"] = last_synced
 
+    wait_for_internet_connection()
+
     handle_click_exit(cli)()
 
     last_synced = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    if HEARTBEAT_URL:
+        import requests
+
+        try:
+            requests.get(HEARTBEAT_URL)
+        except requests.exceptions.RequestException:
+            pass
 
 
 def cron():

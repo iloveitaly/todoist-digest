@@ -10,6 +10,8 @@ services:
       - TARGET_PROJECT=Assistant
       - EMAIL_TO=user-to-receive-digest@gmail.com
       - SCHEDULE=0 7 * * *
+      # optional: heartbeat URL for uptime monitoring (e.g., Healthchecks.io)
+      # - HEARTBEAT_URL=https://hc-ping.com/your-unique-id
       # the container will *not* assume the TZ of the host without this
       # make sure your host has this set
       - TZ=${TZ}

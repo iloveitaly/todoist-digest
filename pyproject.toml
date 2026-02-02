@@ -18,6 +18,7 @@ dependencies = [
   "pyjson5 >= 1.6.9",
   "python-dateutil >= 2.9.0.post0",
   "python-decouple-typed >= 3.11.0",
+  "requests >= 2.32.0",
   "structlog >= 25.4.0",
   "structlog_config >= 0.1.1",
   "todoist-api-python >= 3.1.0",
