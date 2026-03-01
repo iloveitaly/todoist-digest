@@ -1,3 +1,12 @@
+# [0.13.0](https://github.com/iloveitaly/todoist-digest/compare/v0.12.0...v0.13.0) (2026-03-01)
+
+
+### Features
+
+* add heartbeat monitoring and internet connection resilience ([#92](https://github.com/iloveitaly/todoist-digest/issues/92)) ([c7c80ed](https://github.com/iloveitaly/todoist-digest/commit/c7c80edc135da7bb6f2f1a3083981a325ad282bd))
+
+
+
 # [0.12.0](https://github.com/iloveitaly/todoist-digest/compare/v0.11.1...v0.12.0) (2026-01-16)
 
 
@@ -31,16 +40,6 @@
 ### Bug Fixes
 
 * bad key reference ([d1a85a0](https://github.com/iloveitaly/todoist-digest/commit/d1a85a0e96433298c7f5dcd408a61ea6e0d97595))
-
-
-
-## [0.10.7](https://github.com/iloveitaly/todoist-digest/compare/v0.10.6...v0.10.7) (2025-10-01)
-
-
-### Bug Fixes
-
-* oidc auth ([f21e319](https://github.com/iloveitaly/todoist-digest/commit/f21e3194d13a768060c92bc9d23dc8c933d60f40))
-* wrong permissions on ci ([e9ba61c](https://github.com/iloveitaly/todoist-digest/commit/e9ba61c61f5b1f7759f95622b60507e496ac0b92))
 
 
 
