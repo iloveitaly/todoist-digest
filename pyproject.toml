@@ -71,5 +71,5 @@ module-root = ""
 ipdb = { git = "https://github.com/iloveitaly/ipdb", rev = "support-executables" }
 
 [build-system]
-requires = ["uv_build>=0.8.11,<0.10.0"]
+requires = ["uv_build>=0.8.11,<0.11.0"]
 build-backend = "uv_build"
