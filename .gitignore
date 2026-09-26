@@ -97,9 +97,9 @@ celerybeat.pid
 
 # Environments
 .env
-.env*
+.env.*
+.env-*
 !.env-example
-.envrc
 .venv
 env/
 venv/
@@ -136,3 +136,5 @@ tmp/
 # todoist-digest local files
 /last_sync
 /output/
+
+.DS_Store
