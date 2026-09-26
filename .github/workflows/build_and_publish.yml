@@ -33,7 +33,7 @@ jobs:
           bootstrap_args: --update --yes
       - uses: iloveitaly/github-action-direnv-load-and-mask@master
       - run: uv build
-      - run: uv publish
+      - run: uv publish --token ${{ secrets.PYPI_API_TOKEN }}
 
       # Keep uv.lock in sync with pyproject.toml after release version bump without requiring extra config files
       - name: Sync uv.lock
