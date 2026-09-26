@@ -1,78 +1,113 @@
-# https://raw.githubusercontent.com/embedez/ez-cdn/697dbc6dc1496d27b96c57994130f43da7477300/.github/workflows/build.yml
-
-name: Build & Publish
-
+name: Build and Publish to PyPI
 on:
   push:
     branches:
       - main
       - master
-
-# by default, permissions are read-only, read + write is required for git pushes
-# id token is required for OIDC authentication (e.g. with GHCR)
-permissions:
-  id-token: write
-  contents: write
+  pull_request: {}
 
 env:
+  # avoid build failures due to flaky pypi
   PIP_DEFAULT_TIMEOUT: 60
   PIP_RETRIES: 5
-  # required for `gh` cli to work
-  GH_TOKEN: ${{ secrets.github_token }}
+
+  # required otherwise github api calls are rate limited
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  build_and_push_to_registry:
-    name: Docker Build and Push
+  publish:
     runs-on: ubuntu-latest
+    needs: [release-please]
+    if: needs.release-please.outputs.release_created
+    permissions:
+      contents: write
+      packages: write
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v6
+        with:
+          # Check out branch instead of detached HEAD so bare git push works
+          ref: ${{ github.ref_name }}
       - uses: jdx/mise-action@v4
-      - run: uv sync
-
-      - name: Make sure it runs
-        run: uv run ${{ github.event.repository.name }} --help
-
-      - run: uv lock --check
-
-      - name: Conventional Changelog Action
-        id: changelog
-        uses: TriPSs/conventional-changelog-action@v6
         with:
-          github-token: ${{ secrets.github_token }}
-          version-file: "./pyproject.toml"
-          version-path: "project.version"
-          fallback-version: "0.1.0"
-          output-file: "CHANGELOG.md"
+          bootstrap: true
+          bootstrap_args: --update --yes
+      - uses: iloveitaly/github-action-direnv-load-and-mask@master
+      - run: uv build
+      - run: uv publish
 
-      # NOTE must run after versioning otherwise the right version won't be pushed
-      - name: Build distribution package
-        if: ${{ steps.changelog.outputs.skipped == 'false' }}
-        run: uv build
+      # Keep uv.lock in sync with pyproject.toml after release version bump without requiring extra config files
+      - name: Sync uv.lock
+        run: |
+          uv lock
+          git -c user.name="github-actions[bot]" -c user.email="github-actions[bot]@users.noreply.github.com" commit -am "chore(deps): update uv.lock [skip ci]" && git push || true
 
-      - name: Publish to PyPI
-        if: ${{ steps.changelog.outputs.skipped == 'false' }}
-        run: uv publish
-
-      - name: Github Release
-        if: ${{ steps.changelog.outputs.skipped == 'false' }}
-        uses: softprops/action-gh-release@v3
-        with:
-          # output options: https://github.com/TriPSs/conventional-changelog-action#outputs
-          body: ${{ steps.changelog.outputs.clean_changelog }}
-          tag_name: ${{ steps.changelog.outputs.tag }}
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v4
-        if: ${{ steps.changelog.outputs.skipped == 'false' }}
+      - name: Login to GHCR
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          # gh secret set GH_PERSONAL_TOKEN --app actions --body ghp_
-          password: ${{ secrets.GH_PERSONAL_TOKEN }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker images
-        if: ${{ steps.changelog.outputs.skipped == 'false' }}
-        uses: iloveitaly/github-action-nixpacks@main
+      - name: Build and push Docker image
+        uses: iloveitaly/github-action-railpack@master
         with:
-          platforms: "linux/amd64,linux/arm64"
           push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ghcr.io/${{ github.repository }}:latest,ghcr.io/${{ github.repository }}:${{ needs.release-please.outputs.tag_name }}
+
+  release-please:
+    runs-on: ubuntu-latest
+    needs: [build]
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
+    permissions:
+      contents: write
+      issues: write
+      # NOTE this permission requires configuration to be set on the repo, check `just github_repo_permissions_create`
+      pull-requests: write
+    steps:
+      - uses: googleapis/release-please-action@v5
+        id: release
+        with:
+          release-type: python
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # full history so `gitleaks git` in `just lint` can scan every commit
+          fetch-depth: 0
+      - uses: jdx/mise-action@v4
+        env:
+          MISE_ENV: ci
+        with:
+          bootstrap: true
+          bootstrap_args: --update --yes
+      - uses: iloveitaly/github-action-direnv-load-and-mask@master
+      - run: uv sync
+      - run: just lint
+
+  build:
+    needs: lint
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v4
+        with:
+          bootstrap: true
+          bootstrap_args: --update --yes
+      - run: direnv allow . && direnv export gha >> "$GITHUB_ENV"
+      - run: uv sync
+
+      # `uv run` prefix is required since the venv is not activated
+
+      - name: Make sure the CLI runs properly
+        run: uv run ${{ github.event.repository.name }} --help
+
+      - run: just test

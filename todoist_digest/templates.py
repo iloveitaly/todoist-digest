@@ -1,10 +1,10 @@
 import re
 import sys
-from functools import lru_cache
+from functools import cache
 from pathlib import Path
 
 from decouple import config
-from jinja2 import Environment, FileSystemLoader, StrictUndefined, Template
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 from todoist_digest.util import TEMPLATES_DIRECTORY
 
@@ -15,7 +15,7 @@ JINJGA_DEBUG = config("JINJA_DEBUG", default=False, cast=bool)
 #      https://github.com/saltstack/salt/blob/18ca4fdfa9e9c16fb10006f1221254707bece308/salt/utils/templates.py#L283
 
 
-@lru_cache(maxsize=None)
+@cache
 def get_jinja_env(template_dir: str) -> Environment:
     # these extensions are builtin
     extensions = ["jinja2.ext.do", "jinja2.ext.loopcontrols"]
@@ -45,7 +45,7 @@ tb_frame_re = re.compile(
 def jinja2_render_traceback(src_path):
     traceback_print = ""
     # Get traceback objects
-    typ, value, tb = sys.exc_info()
+    _typ, _value, tb = sys.exc_info()
     # Iterate over nested traceback frames
     while tb:
         # Parse traceback frame string
@@ -67,7 +67,7 @@ def jinja2_render_traceback(src_path):
         if tb_frame_istemplate:
             traceback_print += f"  Template '{tb_src_path}', line {tb_lineno}\n"
             # Fetch the line raising the exception
-            with open(tb_src_path, "r") as tb_src_file:
+            with open(tb_src_path) as tb_src_file:
                 for lineno, line in enumerate(tb_src_file):
                     if lineno == int(tb_lineno) - 1:
                         traceback_print += "    " + line.strip() + "\n"
@@ -81,10 +81,4 @@ def render_template(template_path: Path, context: dict) -> str:
     env = get_jinja_env(TEMPLATES_DIRECTORY)
     template = env.get_template(str(template_path.relative_to(TEMPLATES_DIRECTORY)))
 
-    try:
-        html_content = template.render(**context)
-    except Exception as e:
-        # print(jinja2_render_traceback(template_path))
-        raise e
-
-    return html_content
+    return template.render(**context)

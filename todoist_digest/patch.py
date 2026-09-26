@@ -1,6 +1,8 @@
 import logging
 
 import backoff
+import httpx
+import httpx2
 import requests
 import todoist_api_python._core.http_requests
 
@@ -14,7 +16,11 @@ def patch_todoist_api():
     if hasattr(patch_todoist_api, "complete") and patch_todoist_api.complete:
         return
 
-    patch_targets = ["delete", "get", "json", "post"]
+    patch_targets = [
+        target
+        for target in ["delete", "get", "json", "post"]
+        if hasattr(todoist_api_python._core.http_requests, target)
+    ]
 
     for target in patch_targets:
         original_function = getattr(todoist_api_python._core.http_requests, target)
@@ -25,17 +31,28 @@ def patch_todoist_api():
             original_function,
         )
 
-        # TODO pretty sure authorization errors are retried :/
-
         def extract_retry_time(exception):
             """
             raw response on 429:
 
             b'{"error":"Too many requests. Limits reached. Try again later","error_code":35,"error_extra":{"event_id":"07c3fb965eaa4ec6a42e977c3e035c6b","retry_after":66},"error_tag":"LIMITS_REACHED","http_code":429}'
             """
+            if isinstance(exception, (httpx.HTTPStatusError, httpx2.HTTPStatusError)):
+                if exception.response.status_code != 429:
+                    raise exception
+                try:
+                    retry_after_in_seconds = (
+                        exception.response.json()
+                        .get("error_extra", {})
+                        .get("retry_after", 10)
+                    )
+                except (ValueError, KeyError, AttributeError):
+                    retry_after_in_seconds = 10
+                return retry_after_in_seconds + 10
 
             if (
                 not isinstance(exception, requests.exceptions.HTTPError)
+                or exception.response is None
                 or exception.response.status_code != 429
             ):
                 raise exception
@@ -49,16 +66,22 @@ def patch_todoist_api():
 
         patched_function = backoff.on_exception(
             backoff.runtime,
-            (requests.exceptions.HTTPError),
+            (
+                requests.exceptions.HTTPError,
+                httpx.HTTPStatusError,
+                httpx2.HTTPStatusError,
+            ),
             value=extract_retry_time,
             max_tries=8,
         )(original_function)
 
         patched_function2 = backoff.on_exception(
             backoff.expo,
-            # RequestException superclass is IOError, which is a low-level py error
-            # tried using HTTPError as the retry, but at scale the Todoist API has lots of interesting failures
-            (requests.exceptions.RequestException),
+            (
+                requests.exceptions.RequestException,
+                httpx.RequestError,
+                httpx2.RequestError,
+            ),
             max_tries=30,
         )(patched_function)
 

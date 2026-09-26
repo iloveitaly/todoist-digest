@@ -1,6 +1,6 @@
-import todoist_digest.patch as _  # isort: split
-
 import funcy_pipe as fp
+
+import todoist_digest.patch as _  # noqa: F401 # isort: split
 
 # extend funcy with all of the helpful additions I like :)
 fp.patch()  # isort: split
@@ -8,11 +8,10 @@ fp.patch()  # isort: split
 import datetime
 import os
 import re
-from functools import lru_cache
+from functools import cache
 
 import click
 import funcy as f
-import requests
 from dateutil import parser
 from todoist_api_python.api import TodoistAPI
 from todoist_api_python.models import Section, Task
@@ -23,18 +22,18 @@ from .email import send_markdown_email
 from .templates import render_template
 from .todoist import (
     todoist_get_completed_activity,
-    todoist_get_item_info,
     todoist_get_sync_resource,
     todoist_uncomplete_tasks_with_post_completion_comments,
 )
 from .util import TEMPLATES_DIRECTORY, log
+from .version import __version__
 
 # redirect to stderr so we can collect markdown from stdout
 # handler = logging.StreamHandler(sys.stderr)
 # log.addHandler(handler)
 
 
-@lru_cache(maxsize=None)
+@cache
 def section_map(api: TodoistAPI) -> dict[int, Section]:
     # TODO should probably filter by project_id
     sections = api.get_sections(limit=200) | fp.lflatten()
@@ -45,7 +44,7 @@ def section_map(api: TodoistAPI) -> dict[int, Section]:
     return sections | fp.group_by(that.project_id)
 
 
-@lru_cache(maxsize=None)
+@cache
 def collaborator_map(api):
     """
     returns a map of collaborator_id -> collaborator
@@ -134,8 +133,9 @@ def generate_render_nodes_for_comments(
             comments
             | fp.map(add_content_to_attachments)
             | fp.map(
-                lambda comment: comment
-                | {"content": strip_markdown_links(comment["content"])}
+                lambda comment: (
+                    comment | {"content": strip_markdown_links(comment["content"])}
+                )
             )
             | fp.to_list()
         )
@@ -217,7 +217,9 @@ def project_digest(
         target_project = projects | fp.where_attr(name=target_project_name) | fp.first()
 
         if not target_project:
-            raise Exception(f"Could not find project with name {target_project_name}")
+            raise RuntimeError(
+                f"Could not find project with name {target_project_name}"
+            )
 
         target_project_id = target_project.id
 
@@ -252,7 +254,7 @@ def project_digest(
     )
 
     if not filter_user_id:
-        raise Exception(f"Could not find collaborator with email {target_user}")
+        raise RuntimeError(f"Could not find collaborator with email {target_user}")
 
     """
     Comment(attachment=None, content='- Lorem ipsum dolor sit amet?\n- Consectetur adipiscing elit?', id='comment_id', posted_at='2023-10-16T16:02:55.059574Z', project_id=None, task_id='task_id')
@@ -329,7 +331,7 @@ def project_digest(
         | fp.lmap(object_to_dict)
         | fp.where(creator_id=filter_user_id, parent_id=None)
         # exclude any tasks which are already reported in the comments
-        | fp.lfilter(lambda task: task["id"] not in comments_by_target_user.keys())
+        | fp.lfilter(lambda task: task["id"] not in comments_by_target_user)
     )
 
     return {
@@ -392,7 +394,7 @@ def main(last_synced, target_user, target_project, email_auth, email_to, omit_em
         return
 
     if email_auth:
-        now_time_formatted = datetime.datetime.now().strftime("%m/%d")
+        now_time_formatted = datetime.datetime.now(datetime.UTC).strftime("%m/%d")
         last_synced_date_formatted = last_synced_date.strftime("%m/%d")
 
         send_markdown_email(
@@ -404,6 +406,7 @@ def main(last_synced, target_user, target_project, email_auth, email_to, omit_em
 
 
 @click.command(context_settings={"auto_envvar_prefix": "TODOIST_DIGEST"})
+@click.version_option(__version__, "-V", "--version")
 @click.option("--last-synced", required=True, help="The last synced date")
 @click.option("--target-user", required=True, help="The target user")
 @click.option("--target-project", required=True, help="The target project")

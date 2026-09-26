@@ -1,5 +1,5 @@
-import os
 import datetime
+import os
 
 from apscheduler.schedulers.background import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -46,11 +46,11 @@ def job():
     last_synced = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     if HEARTBEAT_URL:
-        import requests
+        import httpx2
 
         try:
-            requests.get(HEARTBEAT_URL)
-        except requests.exceptions.RequestException:
+            httpx2.get(HEARTBEAT_URL)
+        except httpx2.HTTPError:
             pass
 
 

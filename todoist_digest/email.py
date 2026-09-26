@@ -1,4 +1,3 @@
-import logging
 import os
 import re
 import smtplib
@@ -45,15 +44,19 @@ def send_markdown_email(auth_url, markdown_content, subject, to_addresses):
     html_content = process_markdown(markdown_content, subject)
 
     msg = MIMEMultipart()
-    # TODO should be passed down
-    msg["From"] = os.environ.get("TODOIST_DIGEST_EMAIL_FROM", parsed_url.username)
+    from_address = (
+        os.environ.get("TODOIST_DIGEST_EMAIL_FROM")
+        or os.environ.get("EMAIL_FROM")
+        or parsed_url.username
+    )
+    msg["From"] = from_address
     msg["To"] = to_addresses
     msg["Subject"] = subject
 
     log.info(
         "creating email for '%s', from '%s', content length %i",
         to_addresses,
-        parsed_url.username,
+        from_address,
         len(markdown_content),
     )
 

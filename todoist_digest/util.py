@@ -15,8 +15,6 @@ log: structlog.stdlib.BoundLogger
 
 
 def configure_logger():
-    global log
-
     # context manager to auto-clear context
     log.context = structlog.contextvars.bound_contextvars  # type: ignore
     # set thread-local context
@@ -31,7 +29,7 @@ def configure_logger():
         if python_log_path.lower() in ["stdout", "stderr"]:
             python_log = sys.stdout if python_log_path == "stdout" else sys.stderr
         else:
-            python_log = open(
+            python_log = open(  # noqa: SIM115
                 python_log_path, "a", encoding="utf-8"
             )  # pylint: disable=consider-using-with
 

@@ -3,8 +3,10 @@ Todoist API extensions, mostly around the sync API, that won't be added to the c
 """
 
 from datetime import datetime
-from functools import lru_cache
+from functools import cache
 
+import httpx
+import httpx2
 import requests
 from todoist_api_python.models import Task
 
@@ -12,7 +14,7 @@ from .util import log
 
 
 # https://github.com/iloveitaly/todoist-api-python/commit/ec83531fae94a2ccd0a4bd6b2d1db95d86b129b6
-def todoist_get_sync_resource(api, resource_type):
+def todoist_get_sync_resource(api, resource_type) -> dict:
     """
     >>> todoist_get_sync_resource(api, "collaborators")
     """
@@ -25,14 +27,15 @@ def todoist_get_sync_resource(api, resource_type):
         "resource_types": [resource_type],
         "sync_token": "*",
     }
-    resource_data = post(api._session, endpoint, api._token, data=data)
-    return resource_data
+    client = getattr(api, "_client", getattr(api, "_session", None))
+    response = post(client, endpoint, api._token, data=data)
+    return response.json()
 
 
 # https://developer.todoist.com/sync/v9#get-item-info
 # https://github.com/iloveitaly/todoist-api-python/commit/ec83531fae94a2ccd0a4bd6b2d1db95d86b129b6
-@lru_cache(maxsize=None)
-def todoist_get_item_info(api, item_id):
+@cache
+def todoist_get_item_info(api, item_id) -> dict:
     from todoist_api_python._core.endpoints import get_api_url
     from todoist_api_python._core.http_requests import get
 
@@ -40,11 +43,12 @@ def todoist_get_item_info(api, item_id):
     data = {
         "item_id": item_id,
     }
-    resource_data = get(api._session, endpoint, api._token, params=data)
-    return resource_data
+    client = getattr(api, "_client", getattr(api, "_session", None))
+    response = get(client, endpoint, api._token, params=data)
+    return response.json()
 
 
-def todoist_get_completed_activity(api, task_id):
+def todoist_get_completed_activity(api, task_id) -> dict:
     from todoist_api_python._core.endpoints import get_api_url
     from todoist_api_python._core.http_requests import get
 
@@ -55,8 +59,9 @@ def todoist_get_completed_activity(api, task_id):
         "object_id": task_id,
         "object_type": "item",
     }
-    resource_data = get(api._session, endpoint, api._token, params=data)
-    return resource_data
+    client = getattr(api, "_client", getattr(api, "_session", None))
+    response = get(client, endpoint, api._token, params=data)
+    return response.json()
 
 
 def todoist_uncomplete_tasks_with_post_completion_comments(
@@ -145,7 +150,11 @@ def todoist_uncomplete_tasks_with_post_completion_comments(
                 completed_at=completed_at,
                 latest_comment_at=latest_comment_at,
             )
-        except requests.exceptions.HTTPError as exc:
+        except (
+            requests.exceptions.HTTPError,
+            httpx.HTTPError,
+            httpx2.HTTPError,
+        ) as exc:
             status_code = getattr(getattr(exc, "response", None), "status_code", None)
             log.warning(
                 "Failed to uncomplete task",
