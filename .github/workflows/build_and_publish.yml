@@ -23,6 +23,7 @@ jobs:
     permissions:
       contents: write
       packages: write
+      id-token: write
     steps:
       - uses: actions/checkout@v6
         with:
@@ -34,7 +35,7 @@ jobs:
           bootstrap_args: --update --yes
       - uses: iloveitaly/github-action-direnv-load-and-mask@master
       - run: uv build
-      - run: uv publish --token ${{ secrets.PYPI_API_TOKEN }}
+      - run: uv publish
 
       # Keep uv.lock in sync with pyproject.toml after release version bump without requiring extra config files
       - name: Sync uv.lock
