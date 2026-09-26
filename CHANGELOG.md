@@ -16,6 +16,13 @@
 
 
 
+## [0.13.1](https://github.com/iloveitaly/todoist-digest/compare/v0.13.0...v0.13.1) (2026-09-26)
+
+
+### Bug Fixes
+
+* **ci:** add .envrc and allow tracking in .gitignore ([6616feb](https://github.com/iloveitaly/todoist-digest/commit/6616feb456acbe77d91876f1f7544681fa1595b6))
+
 ## [0.11.1](https://github.com/iloveitaly/todoist-digest/compare/v0.11.0...v0.11.1) (2025-11-27)
 
 
@@ -40,6 +47,3 @@
 ### Bug Fixes
 
 * bad key reference ([d1a85a0](https://github.com/iloveitaly/todoist-digest/commit/d1a85a0e96433298c7f5dcd408a61ea6e0d97595))
-
-
-
