@@ -16,6 +16,15 @@
 
 
 
+## [0.13.2](https://github.com/iloveitaly/todoist-digest/compare/v0.13.1...v0.13.2) (2026-09-26)
+
+
+### Bug Fixes
+
+* **ci:** authenticate PyPI publish using api token ([f2a2f43](https://github.com/iloveitaly/todoist-digest/commit/f2a2f43bb1d7b30cc36b9ba254099d3f3d3d8205))
+* **ci:** use PYPI_API_TOKEN for uv publish ([f2a2f43](https://github.com/iloveitaly/todoist-digest/commit/f2a2f43bb1d7b30cc36b9ba254099d3f3d3d8205))
+* **ci:** use trusted publishing (OIDC) instead of API token for PyPI ([e32777a](https://github.com/iloveitaly/todoist-digest/commit/e32777a7f5c565679cfb796fa95b1b06f792685b))
+
 ## [0.13.1](https://github.com/iloveitaly/todoist-digest/compare/v0.13.0...v0.13.1) (2026-09-26)
 
 
