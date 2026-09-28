@@ -16,6 +16,13 @@
 
 
 
+## [0.14.0](https://github.com/iloveitaly/todoist-digest/compare/v0.13.2...v0.14.0) (2026-09-28)
+
+
+### Features
+
+* send digest email when nothing changed via --send-empty ([18d17b4](https://github.com/iloveitaly/todoist-digest/commit/18d17b4702ebffd8c6f641b9eb59322836cd5e92))
+
 ## [0.13.2](https://github.com/iloveitaly/todoist-digest/compare/v0.13.1...v0.13.2) (2026-09-26)
 
 
