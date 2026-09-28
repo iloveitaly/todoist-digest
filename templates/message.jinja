@@ -34,4 +34,6 @@ _{{ comment["posted_at"].strftime("%m/%d") }}_: {{ comment["content"] }}
 {% elif not omit_empty %}
 *No completed tasks*
 {% endif %}
+{% elif send_empty is defined and send_empty %}
+No updates since {{ last_synced }}.
 {% endif %}

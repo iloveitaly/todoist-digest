@@ -347,7 +347,15 @@ def project_digest(
     }
 
 
-def main(last_synced, target_user, target_project, email_auth, email_to, omit_empty):
+def main(
+    last_synced,
+    target_user,
+    target_project,
+    email_auth,
+    email_to,
+    omit_empty,
+    send_empty=False,
+):
     api = get_api()
     projects = api.get_projects() | fp.lflatten()
     last_synced_date = parser.parse(last_synced)
@@ -369,6 +377,8 @@ def main(last_synced, target_user, target_project, email_auth, email_to, omit_em
             TEMPLATES_DIRECTORY / "message.jinja",
             {
                 "omit_empty": omit_empty,
+                "send_empty": send_empty,
+                "last_synced": last_synced,
                 "target_user": target_user,
                 "project_name": digest["project_name"],
                 "project_id": digest["project_id"],
@@ -389,9 +399,12 @@ def main(last_synced, target_user, target_project, email_auth, email_to, omit_em
         for digest in project_digests
     )
 
-    if not has_updates:
+    if not has_updates and not send_empty:
         log.info("No updates to report, skipping email")
         return
+
+    if not has_updates and not markdown.strip():
+        markdown = f"No updates since {last_synced}."
 
     if email_auth:
         now_time_formatted = datetime.datetime.now(datetime.UTC).strftime("%m/%d")
@@ -422,8 +435,30 @@ def main(last_synced, target_user, target_project, email_auth, email_to, omit_em
     required=False,
     help="Email(s) to send digest to. Separate multiple emails with a comma.",
 )
-def cli(last_synced, target_user, target_project, email_auth, email_to, omit_empty):
-    main(last_synced, target_user, target_project, email_auth, email_to, omit_empty)
+@click.option(
+    "--send-empty",
+    is_flag=True,
+    help="Send the digest email even when there are no updates",
+    default=False,
+)
+def cli(
+    last_synced,
+    target_user,
+    target_project,
+    email_auth,
+    email_to,
+    omit_empty,
+    send_empty,
+):
+    main(
+        last_synced,
+        target_user,
+        target_project,
+        email_auth,
+        email_to,
+        omit_empty,
+        send_empty,
+    )
 
 
 if __name__ == "__main__":
