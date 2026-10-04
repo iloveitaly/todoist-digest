@@ -902,16 +902,16 @@ wheels = [
 
 [[package]]
 name = "llm-sql-prompt"
-version = "0.10.0"
+version = "0.11.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
     { name = "mysql-connector-python" },
     { name = "psycopg", extra = ["binary"] },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ba/f7/e8928f5171b4caae2b3b9ac58c5b44da80ebb62db069ed0c6f80f44cf3d2/llm_sql_prompt-0.10.0.tar.gz", hash = "sha256:4360da3bea59eaee751dc3b09bf6933def7ce4e270c62fd95307f50637caea8c", size = 19226, upload-time = "2025-08-29T23:27:43.924Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/1b/c8/068560b5cffb3d34c2188cee08150b5acc6b0b68954bf65d13c01e1e52f2/llm_sql_prompt-0.11.1.tar.gz", hash = "sha256:617b26c230c132dae8aa904439fdcd45de7f7d42955219cd77f570edb367fd70", size = 8169, upload-time = "2026-09-30T21:52:30.226Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/34/e7/b694733a5144e8d9e3461f2457a045ffe23eb93180d5d1fa30168bff0254/llm_sql_prompt-0.10.0-py3-none-any.whl", hash = "sha256:a93ee207f5aa3fe32574a53e9cfbbcca21d1cbba5596c45de1e30e3209597855", size = 10820, upload-time = "2025-08-29T23:27:42.887Z" },
+    { url = "https://files.pythonhosted.org/packages/90/57/80009a67900ad97da444936055fbc73d5258789ef0bb75f2f936ef896e4f/llm_sql_prompt-0.11.1-py3-none-any.whl", hash = "sha256:e5fb6a8464a59d09d3f5cc426208704dcaa1e41b888bb97e62c2d2614825c546", size = 11331, upload-time = "2026-09-30T21:52:29.206Z" },
 ]
 
 [[package]]
