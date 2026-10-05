@@ -16,6 +16,13 @@
 
 
 
+## [0.14.1](https://github.com/iloveitaly/todoist-digest/compare/v0.14.0...v0.14.1) (2026-10-05)
+
+
+### Bug Fixes
+
+* retry requests on 503 service unavailable errors ([1e94538](https://github.com/iloveitaly/todoist-digest/commit/1e945382ebc415f3b62f24ac6b9eea9a09e39484))
+
 ## [0.14.0](https://github.com/iloveitaly/todoist-digest/compare/v0.13.2...v0.14.0) (2026-09-28)
 
 
