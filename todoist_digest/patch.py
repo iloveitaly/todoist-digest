@@ -75,6 +75,21 @@ def patch_todoist_api():
             max_tries=8,
         )(original_function)
 
+        def should_giveup_503(exception):
+            response = getattr(exception, "response", None)
+            return response is None or response.status_code != 503
+
+        patched_function_503 = backoff.on_exception(
+            backoff.expo,
+            (
+                requests.exceptions.HTTPError,
+                httpx.HTTPStatusError,
+                httpx2.HTTPStatusError,
+            ),
+            giveup=should_giveup_503,
+            max_tries=8,
+        )(patched_function)
+
         patched_function2 = backoff.on_exception(
             backoff.expo,
             (
@@ -82,8 +97,9 @@ def patch_todoist_api():
                 httpx.RequestError,
                 httpx2.RequestError,
             ),
+            giveup=lambda e: isinstance(e, requests.exceptions.HTTPError),
             max_tries=30,
-        )(patched_function)
+        )(patched_function_503)
 
         setattr(
             todoist_api_python._core.http_requests,
