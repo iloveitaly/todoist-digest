@@ -16,6 +16,13 @@
 
 
 
+## [0.14.2](https://github.com/iloveitaly/todoist-digest/compare/v0.14.1...v0.14.2) (2026-10-12)
+
+
+### Bug Fixes
+
+* retry all 5xx errors except 501 and fix 429 backoff ([f093836](https://github.com/iloveitaly/todoist-digest/commit/f093836a6b34558a041185ff1bf9d1a33bfba1d7))
+
 ## [0.14.1](https://github.com/iloveitaly/todoist-digest/compare/v0.14.0...v0.14.1) (2026-10-11)
 
 
