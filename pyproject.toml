@@ -29,7 +29,7 @@ dependencies = [
     "structlog_config >= 0.1.1",
     "todoist-api-python >= 3.1.0",
     "whatever >= 0.7",
-    "whenever>=0.9.2",
+    "whenever>=0.10.0",
 ]
 authors = [{ name = "Michael Bianco", email = "mike@mikebian.co" }]
 urls = { "Repository" = "https://github.com/iloveitaly/todoist-digest" }

@@ -187,10 +187,11 @@ def get_completed_tasks(api: TodoistAPI, project_id) -> list[Task]:
     """
 
     project = api.get_project(project_id)
+    now = Instant.now()
     return (
         api.get_completed_tasks_by_completion_date(
-            since=Instant.now().add(hours=-30 * 24).py_datetime(),
-            until=Instant.now().to_fixed_offset().py_datetime(),
+            since=now.add(hours=-30 * 24).to_stdlib(),
+            until=now.to_stdlib(),
             filter_query=f"#{project.name}",
             limit=200,
         )
