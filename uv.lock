@@ -1473,7 +1473,7 @@ wheels = [
 
 [[package]]
 name = "pudb"
-version = "2025.1.5"
+version = "2026.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jedi" },
@@ -1483,9 +1483,9 @@ dependencies = [
     { name = "urwid" },
     { name = "urwid-readline" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f5/69/0c52c6058da586e173e48ef8f9c45bc805d9df78d5ad4d69467ff68694b5/pudb-2025.1.5.tar.gz", hash = "sha256:e6dedb81fc3c8cdcd66cf62e86337cb913570ebb2c994c9ab52012d059e086ad", size = 225714, upload-time = "2025-12-06T20:18:13.993Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/0e/ed/9fed39a03222995a65ce2e1ebc90b9dc27dc099bcd05613a61a0967e0877/pudb-2026.1.tar.gz", hash = "sha256:e32c8eeca47087699548197f101b1fe195ab8187b90e171f0a38cc0852fca73c", size = 226013, upload-time = "2026-10-13T17:23:11.901Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b6/af/42f4877e71728dd59ed7080205f29eba16406f5783c29cdc850200138c80/pudb-2025.1.5-py3-none-any.whl", hash = "sha256:e40c69f102d534cc7b86020c0217e3d424ee81b14a229d068ac122089c301f59", size = 92638, upload-time = "2025-12-06T20:18:12.664Z" },
+    { url = "https://files.pythonhosted.org/packages/66/0c/27eb373a50f9b7d2342628af4dfb760315048352a116dda23c605d7e7677/pudb-2026.1-py3-none-any.whl", hash = "sha256:7e7c5f8d21d9fb60eb09337f3ee2d843054ff181f5fafbfd193beeec07aab092", size = 92710, upload-time = "2026-10-13T17:23:10.453Z" },
 ]
 
 [[package]]
